@@ -24,7 +24,14 @@ const bar = (props) => {
         width={width}
         height={height}
         options={{
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }}
       />
     </div>
