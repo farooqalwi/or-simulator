@@ -700,38 +700,36 @@ const Home = () => {
 
         <hr />
 
-
-
         {/* Form for Mu and Lambda */}
         {showMuLambda &&
           <>
             <div className='row justify-content-cente'>
               <div className='col-4'>
-                <h1 className='display-6'>Insert the value of Mu and Lambda</h1>
+                <h1 className='display-6'>Value of Mu and Lambda</h1>
                 <hr />
                 <form>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="mu">Mu: </label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                     </div>
                   </div>
 
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="lambda">Lambda:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
                     </div>
                   </div>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="time">Time Of Simulation:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="time" value={customervalue} className="form-control" onChange={(event) => { setcustomervalue(event.target.value) }} />
                     </div>
                   </div>
@@ -806,27 +804,27 @@ const Home = () => {
                 <hr />
                 <form>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
                     </div>
                   </div>
 
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="serviceTime">Service Time:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
                     </div>
                   </div>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="age">Age:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="age" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
                     </div>
                   </div>
@@ -892,7 +890,6 @@ const Home = () => {
 
             <hr />
           </>
-
         }
 
         {tableData.length > 0 &&
@@ -990,6 +987,7 @@ const Home = () => {
             </div>
           </div>
         }
+
       </main>
     </>
   )
