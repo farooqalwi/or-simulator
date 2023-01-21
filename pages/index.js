@@ -35,15 +35,12 @@ let data = [];
 
 const Home = () => {
 
-
-
   //To show either Mu and Lambda or Arrival time and service time
   const [showArrSerTime, setShowArrSerTime] = useState(false);
   const [showMuLambda, setShowMuLambda] = useState(false);
 
   //Table data, it will be used to show data in table and on graphs
   const [tableData, setTableData] = useState([]);
-
 
   const [muValue, setMuValue] = useState("");
   const [lambdaValue, setLambdaValue] = useState("");
@@ -66,7 +63,7 @@ const Home = () => {
     endTime = [];
     turnAroundTime = [];
     waitingTime = [];
-     id = 0;
+    id = 0;
 
     responseTime = [];
     server1 = [];
@@ -76,7 +73,7 @@ const Home = () => {
     server2Utilization = 0;
     data = [];
     CustomerInfo = [];
-    CustomerInfodup=[];
+    CustomerInfodup = [];
 
     setTableData([]);
 
@@ -85,8 +82,6 @@ const Home = () => {
     SetSimulateButton(true);
     SetResetButton(true);
   }
-
-
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
@@ -103,11 +98,6 @@ const Home = () => {
     }
   }
 
-
-
-
-
-
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || customervalue == "") {
@@ -120,8 +110,6 @@ const Home = () => {
     let arrrrrrival = result[0]
     let serrrrvice = result[1]
     let priiiiiority = result[2]
-
-
 
     priiiiiority?.map((valueeee, indexxx) => {
 
@@ -139,7 +127,6 @@ const Home = () => {
       });
     })
 
-
     setMuValue("");
     setLambdaValue("");
     setcustomervalue("")
@@ -149,13 +136,8 @@ const Home = () => {
     SetResetButton(false);
 
   }
-  console.log(CustomerInfo)
-
 
   const onEntervalue = () => {
-
-
-
 
     if (arrivalTimevalue == "" || serviceTimeValue == "") {
 
@@ -163,13 +145,13 @@ const Home = () => {
       return;
     }
 
-
     CustomerInfo.push({
       userId: ++id,
       ArrivalTimeofcustomer: arrivalTimevalue,
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
+
     CustomerInfodup.push({
       userId: id,
       ArrivalTimeofcustomer: arrivalTimevalue,
@@ -186,7 +168,6 @@ const Home = () => {
       SetSimulateButton(false);
       SetResetButton(false);
     }
-
   };
 
   function ServiceRandom(mu) {
@@ -203,6 +184,7 @@ const Home = () => {
 
     return rand;
   }
+
   function PriorityRandom() {
     let min = 1;
     let max = 90;
@@ -220,6 +202,7 @@ const Home = () => {
 
     return rand;
   }
+
   function arrivalTimeSim(interarrivalArr) {
     let arrivalArr = [0];
     for (let i = 0; i < interarrivalArr.length; i++) {
@@ -230,6 +213,7 @@ const Home = () => {
 
     return arrivalArr;
   }
+
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -241,8 +225,8 @@ const Home = () => {
     }
     return f;
   }
+
   function Calculateformuuandlambda(x, lambda, mu) {
-   
 
     let priority = []
     let interarrival = []
@@ -257,32 +241,32 @@ const Home = () => {
     let serv = 0;
     let res = 0;
 
-    for (let i = 0; i >-1; i++) {
+    for (let i = 0; i > -1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
-      res = Number(res)+Number(ita) 
-      if(res>=x){
+      res = Number(res) + Number(ita)
+      if (res >= x) {
         debugger
         break
       }
-      else{
-      //cummulative probabability
-      cummulativeprop[i] = ita.toFixed(4);
-      //loopup
-      loopupprop[i] = ita.toFixed(4);
- 
-      //service time
-      const sss = ServiceRandom(mu)
-      resultforservice[i] = Math.round(sss)
+      else {
+        //cummulative probabability
+        cummulativeprop[i] = ita.toFixed(4);
+        //loopup
+        loopupprop[i] = ita.toFixed(4);
 
-      //number between intervals
-      numbetweeninterval[i] = i;
+        //service time
+        const sss = ServiceRandom(mu)
+        resultforservice[i] = Math.round(sss)
+
+        //number between intervals
+        numbetweeninterval[i] = i;
       }
     }
+
     //loopup probability
     loopupprop.unshift()
-
 
     cummulativeprop.map((value, index) => {
 
@@ -297,9 +281,9 @@ const Home = () => {
 
         let temp = Number(cummulativeprop[index - 1]) + Number(0.0001);
         let temp1 = temp.toFixed(4)
-        
+
         classintervals.push({
-          
+
           lowerbound: Number(temp1),
           upperbound: Number(value)
         }
@@ -312,9 +296,9 @@ const Home = () => {
       let varible = Math.random();
       //calculating proirity
       priority[ind] = PriorityRandom();
-     
+
       classintervals.map((value, index) => {
-      
+
         let min = value.lowerbound;
         let max = value.upperbound;
 
@@ -324,22 +308,13 @@ const Home = () => {
       })
     })
 
-
     //arrival time
-
     arrivaltime = arrivalTimeSim(interarrival)
-    
 
     return [arrivaltime, resultforservice, priority]
   }
 
-
-
-
   function sorting(Customerinfo, serverendtime = 0) {
-
-
-
 
     let customeri = []
     let readyuser = {}
@@ -356,7 +331,7 @@ const Home = () => {
       else {
         if (serverendtime < CustomerInfo[0].ArrivalTimeofcustomer) {
           let idoltime = Number(CustomerInfo[0].ArrivalTimeofcustomer) - Number(serverendtime)
-            let tempuserstart = serverendtime+idoltime
+          let tempuserstart = serverendtime + idoltime
           if (value.ArrivalTimeofcustomer <= tempuserstart) {
             customeri.push(value)
 
@@ -383,7 +358,7 @@ const Home = () => {
     if (ready111 == undefined) {
       ready111 = customeri[0]
     }
-    
+
     const abc = CustomerInfo.findIndex(x => x.ArrivalTimeofcustomer == ready111.ArrivalTimeofcustomer &&
       x.ServiceTimeofcustomer == ready111.ServiceTimeofcustomer &&
       x.PriorityForCustomer == ready111.PriorityForCustomer);
@@ -391,9 +366,8 @@ const Home = () => {
 
     return ready111;
   }
+
   const simulate = () => {
-
-
     // Disable enter button and simulator button
     SetEnterButton(true);
     SetSimulateButton(true);
@@ -408,9 +382,7 @@ const Home = () => {
     CustomerInfodup?.map((value, index) => {
 
       if (index == 0) {
-
         const readyforserver = sorting(CustomerInfo)
-
         server1.push(
           {
             userId: Number(readyforserver.userId),
@@ -422,12 +394,9 @@ const Home = () => {
         )
       }
       if (index == 1) {
-
-
         const readyforserver = sorting(CustomerInfo)
 
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-
           server2.push(
             {
               userId: Number(readyforserver.userId),
@@ -453,13 +422,8 @@ const Home = () => {
         }
 
       }
+
       if (index > 1) {
-        debugger
-
-
-
-
-
         if (server2.length > 0 && (server1[server1.length - 1].endTime < server2[server2.length - 1].endTime || server1[server1.length - 1].endTime == server2[server2.length - 1].endTime)) {
 
           const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
@@ -493,10 +457,7 @@ const Home = () => {
                 server: "S1"
               }
             )
-
-
           }
-
         }
         else {
 
@@ -533,14 +494,7 @@ const Home = () => {
                   server: "S2"
                 }
               )
-
-
-
             }
-
-
-
-
           }
           else {
             const readyforserver = sorting(CustomerInfo)
@@ -555,21 +509,11 @@ const Home = () => {
               }
             )
           }
-
-
         }
       }
-
     })
 
-
-
     // Populating start and end time from each server
-
-
-
-
-
     server1?.map((item, index) => {
       startTime.push(
         {
@@ -721,7 +665,6 @@ const Home = () => {
       setTableData(data);
       data = [];
     }
-
   }
 
 
@@ -786,10 +729,10 @@ const Home = () => {
                   </div>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
+                      <label className="form-label" htmlFor="time">Time Of Simulation:</label>
                     </div>
                     <div className='col-8'>
-                      <input type="number" id="x" value={customervalue} className="form-control" onChange={(event) => { setcustomervalue(event.target.value) }} />
+                      <input type="number" id="time" value={customervalue} className="form-control" onChange={(event) => { setcustomervalue(event.target.value) }} />
                     </div>
                   </div>
 
@@ -881,10 +824,10 @@ const Home = () => {
                   </div>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="priority">Priority:</label>
+                      <label className="form-label" htmlFor="age">Age:</label>
                     </div>
                     <div className='col-8'>
-                      <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
+                      <input type="number" id="age" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
                     </div>
                   </div>
 
@@ -953,7 +896,7 @@ const Home = () => {
         }
 
         {tableData.length > 0 &&
-          <>
+          <div className='text-center'>
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
@@ -1045,15 +988,8 @@ const Home = () => {
               </div>
 
             </div>
-
-          </>
+          </div>
         }
-
-
-
-
-
-
       </main>
     </>
   )
