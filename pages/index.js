@@ -9,7 +9,13 @@ let arrivalTime = [];
 let serviceTime = [];
 let temparrival = [];
 let id = 0;
+let interarrival = []
+    
+let cummulativeprop = []
+let loopupprop = []
+let classintervals = []
 
+let numbetweeninterval = []
 let idoltimeforserver1 = 0;
 let idoltimeforserver2 = 0;
 
@@ -119,11 +125,7 @@ const Home = () => {
 
     arrivalTime = result[0]
     serviceTime = result[1]
-<<<<<<< Updated upstream
     priority= result[2]
-=======
-    priority = result[2]
->>>>>>> Stashed changes
 
 
 
@@ -132,11 +134,7 @@ const Home = () => {
       CustomerInfo.push({
         userId: ++id,
         ArrivalTimeofcustomer: arrivalTime[index],
-<<<<<<< Updated upstream
         PriorityForCustomer: priority[index],
-=======
-        PriorityForCustomer:    priority[index],
->>>>>>> Stashed changes
         ServiceTimeofcustomer: serviceTime[index]
       });
       CustomerInfodup.push({
@@ -146,7 +144,6 @@ const Home = () => {
         ServiceTimeofcustomer: serviceTime[index]
       });
     })
-
 
 
     setMuValue("");
@@ -230,18 +227,12 @@ const Home = () => {
     return rand;
   }
   function arrivalTimeSim(interarrivalArr,x,mu) {
-<<<<<<< Updated upstream
     let priority = []
     let resultforservice = []
-=======
->>>>>>> Stashed changes
     let arrivalArr = [0];
-    let resultforservice = []
-    let priority = []
     for (let i = 0; i < interarrivalArr.length; i++) {
       if (i != 0) {
 
-<<<<<<< Updated upstream
         let temp =arrivalArr[i - 1] + interarrivalArr[i]
         if(temp<=x){
 
@@ -264,31 +255,6 @@ const Home = () => {
   debugger
     return [arrivalArr,resultforservice,priority];
   } 
-=======
-
-        
-          let temp = arrivalArr[i - 1] + interarrivalArr[i]
-          if(temp<=x){
-          arrivalArr.push(temp);
-          //calculating proirity
-          priority[i] = PriorityRandom();
-          //service time
-        const sss = ServiceRandom(mu)
-        resultforservice[i] = Math.round(sss)
-          }
-          else{
-            break
-          }
-          
-        }
-       
-      }
-    
-    
-
-    return [arrivalArr,resultforservice,priority];
-  }
->>>>>>> Stashed changes
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -301,36 +267,22 @@ const Home = () => {
     return f;
   }
   function Calculateformuuandlambda(x, lambda, mu) {
-<<<<<<< Updated upstream
    
 
    
-=======
->>>>>>> Stashed changes
-    let interarrival = []
-    let cummulativeprop = []
-    let loopupprop = []
-    let classintervals = []
-<<<<<<< Updated upstream
- 
-=======
->>>>>>> Stashed changes
-    let numbetweeninterval = []
+   
     const fact = factorial(x);
     let ita = 0;
     let serv = 0;
     let res = 0;
+
     for (let i = 0; i >-1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
       res = Number(res)+Number(ita) 
       if(res>=x){
-<<<<<<< Updated upstream
         
-=======
-    
->>>>>>> Stashed changes
         break
       }
       else{
@@ -340,23 +292,20 @@ const Home = () => {
       loopupprop[i] = ita.toFixed(4);
  
       
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
       //number between intervals
       numbetweeninterval[i] = i;
       }
     }
     //loopup probability
-    loopupprop.unshift()
+  
+    loopupprop.unshift("0.0000")
 
 
     cummulativeprop.map((value, index) => {
 
       if (index == 0) {
         classintervals.push({
-          lowerbound: Number(0),
+          lowerbound: Number(0.0000),
           upperbound: Number(value)
         }
         )
@@ -392,19 +341,10 @@ const Home = () => {
     })
 
 
-<<<<<<< Updated upstream
      
     
 
     return arrivalTimeSim(interarrival,x,mu)
-=======
-    //arrival time
-
-    
-    debugger
-    return arrivalTimeSim(interarrival,x,mu)
-    
->>>>>>> Stashed changes
   }
 
 
@@ -415,7 +355,6 @@ const Home = () => {
 
 
 
-    
     let customeri = []
     let readyuser = {}
     let ready111 = {}
@@ -529,11 +468,7 @@ const Home = () => {
 
       }
       if (index > 1) {
-<<<<<<< Updated upstream
         
-=======
-      
->>>>>>> Stashed changes
 
 
 
@@ -788,14 +723,20 @@ const Home = () => {
           startTime: startTime[index].startTime,
           endTime: endTime[index].endTime,
           Servername111: servername[index].servername1,
-
+           
           turnAroundTime: turnAroundTime[index].turnAroundTime,
           waitingTime: waitingTime[index].waitingTime,
           responseTime: responseTime[index].responseTime,
+          Cummulative_probability : cummulativeprop[index],
+          Loopup_Probability: loopupprop[index],
+          Number_Bw_Arrivals:numbetweeninterval[index],
+          Upperbound:classintervals[index].upperbound,
+          Lowerbound:classintervals[index].lowerbound,
+          Interarrival:interarrival[index]
         }
       )
     })
-
+debugger
     if (data.length > 0 && tableData.length === 0) {
       setTableData(data);
       data = [];
@@ -898,8 +839,8 @@ const Home = () => {
                                 <PieChart
                                   title='Server Utilization'
                                   labels={["Server 1", "Server 2"]}
-                                  data={[server1Utilization, server2Utilization]}
                                   backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                                  data={[server1Utilization, server2Utilization]}
                                   // hoverBackgroundColor=''
                                   width={50}
                                   height={50}
@@ -1033,12 +974,50 @@ const Home = () => {
 
         {tableData.length > 0 &&
           <>
+           <table className="table table-bordered table-hover">
+              <thead className=''>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Cummulative probability</th>
+                  <th scope="col">Loopup probability</th>
+                  <th scope="col">Number Between Arrivals</th>
+                  <th scope="col">Range</th>
+                  <th scope="col">Inter Arrival</th>
+                  <th scope="col">Arrival Time</th>
+                  <th scope="col">Service Time</th>
+                  
+                </tr>
+              </thead>
+              <tbody className='table-group-divider'>
+                {tableData?.map((item) => (
+                  <tr key={item.userId}>
+                    <th scope="row">{item.userId}</th>
+                    <td>{item.Cummulative_probability}</td>
+                    <td>{item.Loopup_Probability}</td>
+                    <td>{item.Number_Bw_Arrivals}</td>
+                    <td>{item.Lowerbound} ----{item.Upperbound}</td>
+                    <td>{item.Interarrival}</td>
+                    <td>{item.arrivalTime}</td>
+                    <td>{item.serviceTime}</td>
+                   
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+
+
+
+
+
+
+
+
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Arrival Time</th>
-                  <th scope="col">Service Time</th>
+                
                   <th scope="col">Age</th>
                   <th scope="col">Start Time</th>
                   <th scope="col">End Time</th>
@@ -1052,8 +1031,7 @@ const Home = () => {
                 {tableData?.map((item) => (
                   <tr key={item.userId}>
                     <th scope="row">{item.userId}</th>
-                    <td>{item.arrivalTime}</td>
-                    <td>{item.serviceTime}</td>
+                 
                     <td>{item.priority}</td>
                     <td>{item.startTime}</td>
                     <td>{item.endTime}</td>
