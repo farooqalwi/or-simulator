@@ -117,25 +117,25 @@ const Home = () => {
 
     let result = Calculateformuuandlambda(customervalue, muValue, lambdaValue)
 
-    let arrrrrrival = result[0]
-    let serrrrvice = result[1]
-    let priiiiiority = result[2]
+    arrivalTime = result[0]
+    serviceTime = result[1]
+    priority= result[2]
 
 
 
-    priiiiiority?.map((valueeee, indexxx) => {
+    priority?.map((value, index) => {
 
       CustomerInfo.push({
         userId: ++id,
-        ArrivalTimeofcustomer: arrrrrrival[indexxx],
-        PriorityForCustomer: priiiiiority[indexxx],
-        ServiceTimeofcustomer: serrrrvice[indexxx]
+        ArrivalTimeofcustomer: arrivalTime[index],
+        PriorityForCustomer: priority[index],
+        ServiceTimeofcustomer: serviceTime[index]
       });
       CustomerInfodup.push({
         userId: id,
-        ArrivalTimeofcustomer: arrrrrrival[indexxx],
-        PriorityForCustomer: priiiiiority[indexxx],
-        ServiceTimeofcustomer: serrrrvice[indexxx]
+        ArrivalTimeofcustomer: arrivalTime[index],
+        PriorityForCustomer: priority[index],
+        ServiceTimeofcustomer: serviceTime[index]
       });
     })
 
@@ -220,16 +220,35 @@ const Home = () => {
 
     return rand;
   }
-  function arrivalTimeSim(interarrivalArr) {
+  function arrivalTimeSim(interarrivalArr,x,mu) {
+    let priority = []
+    let resultforservice = []
     let arrivalArr = [0];
     for (let i = 0; i < interarrivalArr.length; i++) {
       if (i != 0) {
-        arrivalArr.push(arrivalArr[i - 1] + interarrivalArr[i]);
+
+        let temp =arrivalArr[i - 1] + interarrivalArr[i]
+        if(temp<=x){
+
+          arrivalArr.push(temp);
+          //service time
+      const sss = ServiceRandom(mu)
+      resultforservice[i] = Math.round(sss)
+
+      //calculating proirity
+      priority[i] = PriorityRandom();
+
+
+        }
+        else{
+          break
+        }
+  
       }
     }
-
-    return arrivalArr;
-  }
+  debugger
+    return [arrivalArr,resultforservice,priority];
+  } 
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -244,13 +263,13 @@ const Home = () => {
   function Calculateformuuandlambda(x, lambda, mu) {
    
 
-    let priority = []
+   
     let interarrival = []
     let arrivaltime = []
     let cummulativeprop = []
     let loopupprop = []
     let classintervals = []
-    let resultforservice = []
+ 
     let numbetweeninterval = []
     const fact = factorial(x);
     let ita = 0;
@@ -263,7 +282,7 @@ const Home = () => {
       ita = ita + def;
       res = Number(res)+Number(ita) 
       if(res>=x){
-        debugger
+        
         break
       }
       else{
@@ -272,10 +291,7 @@ const Home = () => {
       //loopup
       loopupprop[i] = ita.toFixed(4);
  
-      //service time
-      const sss = ServiceRandom(mu)
-      resultforservice[i] = Math.round(sss)
-
+      
       //number between intervals
       numbetweeninterval[i] = i;
       }
@@ -310,8 +326,7 @@ const Home = () => {
     numbetweeninterval.map((val, ind) => {
 
       let varible = Math.random();
-      //calculating proirity
-      priority[ind] = PriorityRandom();
+      
      
       classintervals.map((value, index) => {
       
@@ -325,12 +340,10 @@ const Home = () => {
     })
 
 
-    //arrival time
-
-    arrivaltime = arrivalTimeSim(interarrival)
+     
     
 
-    return [arrivaltime, resultforservice, priority]
+    return arrivalTimeSim(interarrival,x,mu)
   }
 
 
@@ -454,7 +467,7 @@ const Home = () => {
 
       }
       if (index > 1) {
-        debugger
+        
 
 
 
