@@ -119,7 +119,11 @@ const Home = () => {
 
     arrivalTime = result[0]
     serviceTime = result[1]
+<<<<<<< Updated upstream
     priority= result[2]
+=======
+    priority = result[2]
+>>>>>>> Stashed changes
 
 
 
@@ -128,7 +132,11 @@ const Home = () => {
       CustomerInfo.push({
         userId: ++id,
         ArrivalTimeofcustomer: arrivalTime[index],
+<<<<<<< Updated upstream
         PriorityForCustomer: priority[index],
+=======
+        PriorityForCustomer:    priority[index],
+>>>>>>> Stashed changes
         ServiceTimeofcustomer: serviceTime[index]
       });
       CustomerInfodup.push({
@@ -138,6 +146,7 @@ const Home = () => {
         ServiceTimeofcustomer: serviceTime[index]
       });
     })
+
 
 
     setMuValue("");
@@ -221,12 +230,18 @@ const Home = () => {
     return rand;
   }
   function arrivalTimeSim(interarrivalArr,x,mu) {
+<<<<<<< Updated upstream
     let priority = []
     let resultforservice = []
+=======
+>>>>>>> Stashed changes
     let arrivalArr = [0];
+    let resultforservice = []
+    let priority = []
     for (let i = 0; i < interarrivalArr.length; i++) {
       if (i != 0) {
 
+<<<<<<< Updated upstream
         let temp =arrivalArr[i - 1] + interarrivalArr[i]
         if(temp<=x){
 
@@ -249,6 +264,31 @@ const Home = () => {
   debugger
     return [arrivalArr,resultforservice,priority];
   } 
+=======
+
+        
+          let temp = arrivalArr[i - 1] + interarrivalArr[i]
+          if(temp<=x){
+          arrivalArr.push(temp);
+          //calculating proirity
+          priority[i] = PriorityRandom();
+          //service time
+        const sss = ServiceRandom(mu)
+        resultforservice[i] = Math.round(sss)
+          }
+          else{
+            break
+          }
+          
+        }
+       
+      }
+    
+    
+
+    return [arrivalArr,resultforservice,priority];
+  }
+>>>>>>> Stashed changes
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -261,28 +301,36 @@ const Home = () => {
     return f;
   }
   function Calculateformuuandlambda(x, lambda, mu) {
+<<<<<<< Updated upstream
    
 
    
+=======
+>>>>>>> Stashed changes
     let interarrival = []
-    let arrivaltime = []
     let cummulativeprop = []
     let loopupprop = []
     let classintervals = []
+<<<<<<< Updated upstream
  
+=======
+>>>>>>> Stashed changes
     let numbetweeninterval = []
     const fact = factorial(x);
     let ita = 0;
     let serv = 0;
     let res = 0;
-
     for (let i = 0; i >-1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
       res = Number(res)+Number(ita) 
       if(res>=x){
+<<<<<<< Updated upstream
         
+=======
+    
+>>>>>>> Stashed changes
         break
       }
       else{
@@ -292,6 +340,10 @@ const Home = () => {
       loopupprop[i] = ita.toFixed(4);
  
       
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
       //number between intervals
       numbetweeninterval[i] = i;
       }
@@ -340,10 +392,19 @@ const Home = () => {
     })
 
 
+<<<<<<< Updated upstream
      
     
 
     return arrivalTimeSim(interarrival,x,mu)
+=======
+    //arrival time
+
+    
+    debugger
+    return arrivalTimeSim(interarrival,x,mu)
+    
+>>>>>>> Stashed changes
   }
 
 
@@ -354,6 +415,7 @@ const Home = () => {
 
 
 
+    
     let customeri = []
     let readyuser = {}
     let ready111 = {}
@@ -467,7 +529,11 @@ const Home = () => {
 
       }
       if (index > 1) {
+<<<<<<< Updated upstream
         
+=======
+      
+>>>>>>> Stashed changes
 
 
 
