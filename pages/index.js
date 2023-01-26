@@ -73,7 +73,11 @@ const Home = () => {
     turnAroundTime = [];
     waitingTime = [];
      id = 0;
+     classintervals = []
+     servername =[]
 
+     idoltimeforserver1 = 0;
+    idoltimeforserver2 = 0;
     responseTime = [];
     server1 = [];
     server2 = [];
@@ -252,7 +256,7 @@ const Home = () => {
   
       }
     }
-  debugger
+  
     return [arrivalArr,resultforservice,priority];
   } 
   function factorial(num) {
@@ -273,31 +277,26 @@ const Home = () => {
    
     const fact = factorial(x);
     let ita = 0;
-    let serv = 0;
-    let res = 0;
-
     for (let i = 0; i >-1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
-      res = Number(res)+Number(ita) 
-      if(res>=x){
-        
-        break
-      }
-      else{
+      if(ita<0.9999){
       //cummulative probabability
       cummulativeprop[i] = ita.toFixed(4);
       //loopup
       loopupprop[i] = ita.toFixed(4);
- 
-      
+
       //number between intervals
       numbetweeninterval[i] = i;
       }
+      else{
+       
+        break
+      }
     }
     //loopup probability
-  
+    
     loopupprop.unshift("0.0000")
 
 
@@ -325,9 +324,10 @@ const Home = () => {
     })
 
     numbetweeninterval.map((val, ind) => {
+      
 
       let varible = Math.random();
-      
+ 
      
       classintervals.map((value, index) => {
       
@@ -424,7 +424,9 @@ const Home = () => {
       if (index == 0) {
 
         const readyforserver = sorting(CustomerInfo)
-
+        if(readyforserver.ArrivalTimeofcustomer>0){
+          idoltimeforserver1+=readyforserver.ArrivalTimeofcustomer-1
+        }
         server1.push(
           {
             userId: Number(readyforserver.userId),
@@ -436,12 +438,17 @@ const Home = () => {
         )
       }
       if (index == 1) {
+       
+
 
 
         const readyforserver = sorting(CustomerInfo)
+         
 
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-
+               if(readyforserver.ArrivalTimeofcustomer>0){
+            idoltimeforserver2+=readyforserver.ArrivalTimeofcustomer-1
+            }
           server2.push(
             {
               userId: Number(readyforserver.userId),
@@ -493,12 +500,22 @@ const Home = () => {
             const temp = 0;
             if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
               temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server1[server1.length - 1].endTime))
+              idoltimeforserver1 += temp
+              server1.push(
+              {
+                userId: Number(readyforserver.userId),
+                startTime: Number(readyforserver.ArrivalTimeofcustomer),
+                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
+                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                server: "S1"
+              }
+            )
+
+
             }
             else {
               temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-            }
-            idoltimeforserver1 += temp
-            server1.push(
+                   server1.push(
               {
                 userId: Number(readyforserver.userId),
                 startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
@@ -509,9 +526,15 @@ const Home = () => {
             )
 
 
+
+            }
+            
+           
+
           }
 
         }
+       
         else {
 
           if (server2.length > 0) {
@@ -532,13 +555,7 @@ const Home = () => {
               const temp = 0;
               if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
                 temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-              }
-              else {
-                temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server2[server2.length - 1].endTime))
-
-              }
-              idoltimeforserver2 += temp
-              server2.push(
+                 server2.push(
                 {
                   userId: Number(readyforserver.userId),
                   startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
@@ -547,6 +564,22 @@ const Home = () => {
                   server: "S2"
                 }
               )
+              }
+              else {
+                temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server2[server2.length - 1].endTime))
+                idoltimeforserver2 += temp
+                 server2.push(
+                {
+                  userId: Number(readyforserver.userId),
+                  startTime: Number(readyforserver.ArrivalTimeofcustomer) ,
+                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
+                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                  server: "S2"
+                }
+              )
+              }
+              
+             
 
 
 
@@ -558,7 +591,9 @@ const Home = () => {
           }
           else {
             const readyforserver = sorting(CustomerInfo)
-
+            if(readyforserver.ArrivalTimeofcustomer>0){
+              idoltimeforserver2+=readyforserver.ArrivalTimeofcustomer-1
+              }
             server2.push(
               {
                 userId: Number(readyforserver.userId),
@@ -582,7 +617,7 @@ const Home = () => {
 
 
 
-
+    
 
     server1?.map((item, index) => {
       startTime.push(
@@ -598,13 +633,9 @@ const Home = () => {
           endTime: item.endTime
         }
       );
-      servername.push(
-        {
-          userId: item.userId,
-          servername1: item.server
-        }
-      );
+    
     })
+
 
     server2.map((item, index) => {
       startTime.push(
@@ -620,6 +651,13 @@ const Home = () => {
           endTime: item.endTime
         }
       );
+     
+    })
+
+    //populating servername
+    server1?.map((item, index) => {
+      debugger
+
       servername.push(
         {
           userId: item.userId,
@@ -627,6 +665,17 @@ const Home = () => {
         }
       );
     })
+    server2.map((item, index) => {
+      debugger
+      servername.push(
+        {
+          userId: item.userId,
+          servername1: item.server
+        }
+      );
+    })
+
+
 
     // Calculating turn around time
     server1?.map((item, index) => {
@@ -697,7 +746,7 @@ const Home = () => {
     CustomerInfodup.map((item, index) => {
       totalServiceTime = totalServiceTime + Number(item.ServiceTimeofcustomer);
     })
-
+  
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
     server2Utilization = Math.round((((Number(server2[server2.length - 1].endTime)) - Number((server2[0].startTime))) / totalServiceTime) * 100);
     console.log(startTime)
@@ -736,7 +785,7 @@ const Home = () => {
         }
       )
     })
-debugger
+
     if (data.length > 0 && tableData.length === 0) {
       setTableData(data);
       data = [];
@@ -827,47 +876,7 @@ debugger
                 </form>
               </div>
 
-              <div className='col-8 d-flex justify-content-center'>
-                <div className='row'>
-                  {tableData.length > 0 &&
-                    <div className='col-12'>
-                      <div className='row'>
-                        <div className='col-6'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <PieChart
-                                  title='Server Utilization'
-                                  labels={["Server 1", "Server 2"]}
-                                  backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
-                                  data={[server1Utilization, server2Utilization]}
-                                  // hoverBackgroundColor=''
-                                  width={50}
-                                  height={50}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                        </div>
-
-                        <div className='col-6'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{queueLength}</h1>
-                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Number of customers who wait</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
-
-                </div>
-
-              </div>
+             
             </div>
 
             <hr />
@@ -974,50 +983,13 @@ debugger
 
         {tableData.length > 0 &&
           <>
-           <table className="table table-bordered table-hover">
-              <thead className=''>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Cummulative probability</th>
-                  <th scope="col">Loopup probability</th>
-                  <th scope="col">Number Between Arrivals</th>
-                  <th scope="col">Range</th>
-                  <th scope="col">Inter Arrival</th>
-                  <th scope="col">Arrival Time</th>
-                  <th scope="col">Service Time</th>
-                  
-                </tr>
-              </thead>
-              <tbody className='table-group-divider'>
-                {tableData?.map((item) => (
-                  <tr key={item.userId}>
-                    <th scope="row">{item.userId}</th>
-                    <td>{item.Cummulative_probability}</td>
-                    <td>{item.Loopup_Probability}</td>
-                    <td>{item.Number_Bw_Arrivals}</td>
-                    <td>{item.Lowerbound} ----{item.Upperbound}</td>
-                    <td>{item.Interarrival}</td>
-                    <td>{item.arrivalTime}</td>
-                    <td>{item.serviceTime}</td>
-                   
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-
-
-
-
-
-
-
-
+          
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
                   <th scope="col">#</th>
-                
+                  <th scope="col">Arrival Time</th>
+                  <th scope="col">Service Time</th>
                   <th scope="col">Age</th>
                   <th scope="col">Start Time</th>
                   <th scope="col">End Time</th>
@@ -1031,6 +1003,8 @@ debugger
                 {tableData?.map((item) => (
                   <tr key={item.userId}>
                     <th scope="row">{item.userId}</th>
+                    <td>{item.arrivalTime}</td>
+                    <td>{item.serviceTime}</td>
                  
                     <td>{item.priority}</td>
                     <td>{item.startTime}</td>
@@ -1043,6 +1017,69 @@ debugger
                 ))}
               </tbody>
             </table>
+
+
+            <div className='col  '>
+                <div className='row'>
+                  {tableData.length > 0 &&
+                    <div className='col'>
+                      <div className='row'>
+                        <div className='col-3'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <PieChart
+                                  title='Server Utilization'
+                                  labels={["Server 1", "Server 2"]}
+                                  backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                                  data={[server1Utilization, server2Utilization]}
+                                  // hoverBackgroundColor=''
+                                  width={50}
+                                  height={50}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+
+                        <div className='col-3'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{queueLength}</h1>
+                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Number of customers who wait</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                         <div className='col-3'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{idoltimeforserver1}</h1>
+                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Idol Time For Server 1</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                         <div className='col-3'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{idoltimeforserver2}</h1>
+                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Idol Time For Server 2</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+
+                </div>
+
+              </div>
 
             <div className='row'>
               <div className='col-6'>
