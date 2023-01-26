@@ -10,7 +10,7 @@ let serviceTime = [];
 let temparrival = [];
 let id = 0;
 let interarrival = []
-    
+
 let cummulativeprop = []
 let loopupprop = []
 let classintervals = []
@@ -40,16 +40,12 @@ let server2Utilization = 0;
 let data = [];
 
 const Home = () => {
-
-
-
   //To show either Mu and Lambda or Arrival time and service time
   const [showArrSerTime, setShowArrSerTime] = useState(false);
   const [showMuLambda, setShowMuLambda] = useState(false);
 
   //Table data, it will be used to show data in table and on graphs
   const [tableData, setTableData] = useState([]);
-
 
   const [muValue, setMuValue] = useState("");
   const [lambdaValue, setLambdaValue] = useState("");
@@ -72,11 +68,11 @@ const Home = () => {
     endTime = [];
     turnAroundTime = [];
     waitingTime = [];
-     id = 0;
-     classintervals = []
-     servername =[]
+    id = 0;
+    classintervals = []
+    servername = []
 
-     idoltimeforserver1 = 0;
+    idoltimeforserver1 = 0;
     idoltimeforserver2 = 0;
     responseTime = [];
     server1 = [];
@@ -86,7 +82,7 @@ const Home = () => {
     server2Utilization = 0;
     data = [];
     CustomerInfo = [];
-    CustomerInfodup=[];
+    CustomerInfodup = [];
 
     setTableData([]);
 
@@ -95,8 +91,6 @@ const Home = () => {
     SetSimulateButton(true);
     SetResetButton(true);
   }
-
-
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
@@ -113,11 +107,6 @@ const Home = () => {
     }
   }
 
-
-
-
-
-
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || customervalue == "") {
@@ -129,9 +118,7 @@ const Home = () => {
 
     arrivalTime = result[0]
     serviceTime = result[1]
-    priority= result[2]
-
-
+    priority = result[2]
 
     priority?.map((value, index) => {
 
@@ -149,7 +136,6 @@ const Home = () => {
       });
     })
 
-
     setMuValue("");
     setLambdaValue("");
     setcustomervalue("")
@@ -157,22 +143,14 @@ const Home = () => {
 
     SetSimulateButton(false);
     SetResetButton(false);
-
   }
-  console.log(CustomerInfo)
-
 
   const onEntervalue = () => {
-
-
-
-
     if (arrivalTimevalue == "" || serviceTimeValue == "") {
 
       alert("Please enter valid data");
       return;
     }
-
 
     CustomerInfo.push({
       userId: ++id,
@@ -180,6 +158,7 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
+
     CustomerInfodup.push({
       userId: id,
       ArrivalTimeofcustomer: arrivalTimevalue,
@@ -213,6 +192,7 @@ const Home = () => {
 
     return rand;
   }
+
   function PriorityRandom() {
     let min = 1;
     let max = 90;
@@ -230,35 +210,32 @@ const Home = () => {
 
     return rand;
   }
-  function arrivalTimeSim(interarrivalArr,x,mu) {
+
+  function arrivalTimeSim(interarrivalArr, x, mu) {
     let priority = []
     let resultforservice = []
     let arrivalArr = [0];
+
     for (let i = 0; i < interarrivalArr.length; i++) {
       if (i != 0) {
-
-        let temp =arrivalArr[i - 1] + interarrivalArr[i]
-        if(temp<=x){
-
+        let temp = arrivalArr[i - 1] + interarrivalArr[i]
+        if (temp <= x) {
           arrivalArr.push(temp);
           //service time
-      const sss = ServiceRandom(mu)
-      resultforservice[i] = Math.round(sss)
+          const sss = ServiceRandom(mu)
+          resultforservice[i] = Math.round(sss)
 
-      //calculating proirity
-      priority[i] = PriorityRandom();
-
-
+          //calculating proirity
+          priority[i] = PriorityRandom();
         }
-        else{
+        else {
           break
         }
-  
       }
     }
-  
-    return [arrivalArr,resultforservice,priority];
-  } 
+    return [arrivalArr, resultforservice, priority];
+  }
+
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -270,36 +247,31 @@ const Home = () => {
     }
     return f;
   }
-  function Calculateformuuandlambda(x, lambda, mu) {
-   
 
-   
-   
+  function Calculateformuuandlambda(x, lambda, mu) {
     const fact = factorial(x);
     let ita = 0;
-    for (let i = 0; i >-1; i++) {
+    for (let i = 0; i > -1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
-      if(ita<0.9999){
-      //cummulative probabability
-      cummulativeprop[i] = ita.toFixed(4);
-      //loopup
-      loopupprop[i] = ita.toFixed(4);
+      if (ita < 0.9999) {
+        //cummulative probabability
+        cummulativeprop[i] = ita.toFixed(4);
+        //loopup
+        loopupprop[i] = ita.toFixed(4);
 
-      //number between intervals
-      numbetweeninterval[i] = i;
+        //number between intervals
+        numbetweeninterval[i] = i;
       }
-      else{
-       
+      else {
+
         break
       }
     }
+
     //loopup probability
-    
     loopupprop.unshift("0.0000")
-
-
     cummulativeprop.map((value, index) => {
 
       if (index == 0) {
@@ -313,9 +285,9 @@ const Home = () => {
 
         let temp = Number(cummulativeprop[index - 1]) + Number(0.0001);
         let temp1 = temp.toFixed(4)
-        
+
         classintervals.push({
-          
+
           lowerbound: Number(temp1),
           upperbound: Number(value)
         }
@@ -324,13 +296,9 @@ const Home = () => {
     })
 
     numbetweeninterval.map((val, ind) => {
-      
-
       let varible = Math.random();
- 
-     
       classintervals.map((value, index) => {
-      
+
         let min = value.lowerbound;
         let max = value.upperbound;
 
@@ -340,21 +308,10 @@ const Home = () => {
       })
     })
 
-
-     
-    
-
-    return arrivalTimeSim(interarrival,x,mu)
+    return arrivalTimeSim(interarrival, x, mu)
   }
 
-
-
-
   function sorting(Customerinfo, serverendtime = 0) {
-
-
-
-
     let customeri = []
     let readyuser = {}
     let ready111 = {}
@@ -370,26 +327,18 @@ const Home = () => {
       else {
         if (serverendtime < CustomerInfo[0].ArrivalTimeofcustomer) {
           let idoltime = Number(CustomerInfo[0].ArrivalTimeofcustomer) - Number(serverendtime)
-            let tempuserstart = serverendtime+idoltime
+          let tempuserstart = serverendtime + idoltime
           if (value.ArrivalTimeofcustomer <= tempuserstart) {
             customeri.push(value)
-
           }
-
-
         }
         else {
-
-
           if (value.ArrivalTimeofcustomer <= serverendtime) {
             customeri.push(value)
-
           }
         }
-
       }
     })
-
 
     readyuser = customeri.filter(x => x.PriorityForCustomer > 60)
     ready111 = readyuser[0];
@@ -397,7 +346,7 @@ const Home = () => {
     if (ready111 == undefined) {
       ready111 = customeri[0]
     }
-    
+
     const abc = CustomerInfo.findIndex(x => x.ArrivalTimeofcustomer == ready111.ArrivalTimeofcustomer &&
       x.ServiceTimeofcustomer == ready111.ServiceTimeofcustomer &&
       x.PriorityForCustomer == ready111.PriorityForCustomer);
@@ -405,9 +354,8 @@ const Home = () => {
 
     return ready111;
   }
+
   const simulate = () => {
-
-
     // Disable enter button and simulator button
     SetEnterButton(true);
     SetSimulateButton(true);
@@ -417,15 +365,13 @@ const Home = () => {
       alert("Please enter some valid data");
       return;
     }
+
     // Making queues for each server
-
     CustomerInfodup?.map((value, index) => {
-
       if (index == 0) {
-
         const readyforserver = sorting(CustomerInfo)
-        if(readyforserver.ArrivalTimeofcustomer>0){
-          idoltimeforserver1+=readyforserver.ArrivalTimeofcustomer-1
+        if (readyforserver.ArrivalTimeofcustomer > 0) {
+          idoltimeforserver1 += readyforserver.ArrivalTimeofcustomer - 1
         }
         server1.push(
           {
@@ -433,32 +379,26 @@ const Home = () => {
             startTime: Number(readyforserver.ArrivalTimeofcustomer),
             endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
             arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-            server: "S1"
+            server: "Server 1"
           }
         )
       }
+
       if (index == 1) {
-       
-
-
-
         const readyforserver = sorting(CustomerInfo)
-         
-
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-               if(readyforserver.ArrivalTimeofcustomer>0){
-            idoltimeforserver2+=readyforserver.ArrivalTimeofcustomer-1
-            }
+          if (readyforserver.ArrivalTimeofcustomer > 0) {
+            idoltimeforserver2 += readyforserver.ArrivalTimeofcustomer - 1
+          }
           server2.push(
             {
               userId: Number(readyforserver.userId),
               startTime: Number(readyforserver.ArrivalTimeofcustomer),
               endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
               arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "S2"
+              server: "Server 2"
             }
           )
-
         }
         else {
           server1.push(
@@ -467,22 +407,15 @@ const Home = () => {
               startTime: Number(readyforserver.ArrivalTimeofcustomer),
               endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
               arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "S1"
+              server: "Server 1"
 
             }
           )
         }
-
       }
+
       if (index > 1) {
-        
-
-
-
-
-
         if (server2.length > 0 && (server1[server1.length - 1].endTime < server2[server2.length - 1].endTime || server1[server1.length - 1].endTime == server2[server2.length - 1].endTime)) {
-
           const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
           if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
             server1.push(
@@ -491,10 +424,9 @@ const Home = () => {
                 startTime: Number(readyforserver.ArrivalTimeofcustomer),
                 endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
                 arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "S1"
+                server: "Server 1"
               }
             )
-
           }
           else {
             const temp = 0;
@@ -502,44 +434,32 @@ const Home = () => {
               temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server1[server1.length - 1].endTime))
               idoltimeforserver1 += temp
               server1.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "S1"
-              }
-            )
-
-
+                {
+                  userId: Number(readyforserver.userId),
+                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
+                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
+                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                  server: "Server 1"
+                }
+              )
             }
             else {
               temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-                   server1.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "S1"
-              }
-            )
-
-
-
+              server1.push(
+                {
+                  userId: Number(readyforserver.userId),
+                  startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
+                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
+                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                  server: "Server 1"
+                }
+              )
             }
-            
-           
-
           }
-
         }
-       
         else {
-
           if (server2.length > 0) {
             const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
-
             if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
               server2.push(
                 {
@@ -547,7 +467,7 @@ const Home = () => {
                   startTime: Number(readyforserver.ArrivalTimeofcustomer),
                   endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
                   arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "S2"
+                  server: "Server 2"
                 }
               )
             }
@@ -555,70 +475,51 @@ const Home = () => {
               const temp = 0;
               if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
                 temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-                 server2.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "S2"
-                }
-              )
+                server2.push(
+                  {
+                    userId: Number(readyforserver.userId),
+                    startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
+                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
+                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                    server: "Server 2"
+                  }
+                )
               }
               else {
                 temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server2[server2.length - 1].endTime))
                 idoltimeforserver2 += temp
-                 server2.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer) ,
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "S2"
-                }
-              )
+                server2.push(
+                  {
+                    userId: Number(readyforserver.userId),
+                    startTime: Number(readyforserver.ArrivalTimeofcustomer),
+                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
+                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+                    server: "Server 2"
+                  }
+                )
               }
-              
-             
-
-
-
             }
-
-
-
-
           }
           else {
             const readyforserver = sorting(CustomerInfo)
-            if(readyforserver.ArrivalTimeofcustomer>0){
-              idoltimeforserver2+=readyforserver.ArrivalTimeofcustomer-1
-              }
+            if (readyforserver.ArrivalTimeofcustomer > 0) {
+              idoltimeforserver2 += readyforserver.ArrivalTimeofcustomer - 1
+            }
             server2.push(
               {
                 userId: Number(readyforserver.userId),
                 startTime: Number(readyforserver.ArrivalTimeofcustomer),
                 endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
                 arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "S2"
+                server: "Server 2"
               }
             )
           }
-
-
         }
       }
-
     })
 
-
-
     // Populating start and end time from each server
-
-
-
-    
-
     server1?.map((item, index) => {
       startTime.push(
         {
@@ -633,7 +534,6 @@ const Home = () => {
           endTime: item.endTime
         }
       );
-    
     })
 
 
@@ -651,13 +551,10 @@ const Home = () => {
           endTime: item.endTime
         }
       );
-     
     })
 
     //populating servername
     server1?.map((item, index) => {
-      debugger
-
       servername.push(
         {
           userId: item.userId,
@@ -666,7 +563,6 @@ const Home = () => {
       );
     })
     server2.map((item, index) => {
-      debugger
       servername.push(
         {
           userId: item.userId,
@@ -674,8 +570,6 @@ const Home = () => {
         }
       );
     })
-
-
 
     // Calculating turn around time
     server1?.map((item, index) => {
@@ -746,12 +640,9 @@ const Home = () => {
     CustomerInfodup.map((item, index) => {
       totalServiceTime = totalServiceTime + Number(item.ServiceTimeofcustomer);
     })
-  
+
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
     server2Utilization = Math.round((((Number(server2[server2.length - 1].endTime)) - Number((server2[0].startTime))) / totalServiceTime) * 100);
-    console.log(startTime)
-    console.log(endTime)
-
 
     // Sorting data
     startTime.sort((a, b) => a.userId - b.userId);
@@ -772,16 +663,16 @@ const Home = () => {
           startTime: startTime[index].startTime,
           endTime: endTime[index].endTime,
           Servername111: servername[index].servername1,
-           
+
           turnAroundTime: turnAroundTime[index].turnAroundTime,
           waitingTime: waitingTime[index].waitingTime,
           responseTime: responseTime[index].responseTime,
-          Cummulative_probability : cummulativeprop[index],
+          Cummulative_probability: cummulativeprop[index],
           Loopup_Probability: loopupprop[index],
-          Number_Bw_Arrivals:numbetweeninterval[index],
-          Upperbound:classintervals[index].upperbound,
-          Lowerbound:classintervals[index].lowerbound,
-          Interarrival:interarrival[index]
+          Number_Bw_Arrivals: numbetweeninterval[index],
+          Upperbound: classintervals[index].upperbound,
+          Lowerbound: classintervals[index].lowerbound,
+          Interarrival: interarrival[index]
         }
       )
     })
@@ -798,14 +689,14 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="description" content="Generated by create next app" />
+        <meta name="description" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className=" m-4">
+      <main className="m-4">
 
         <div className='row'>
           <div className='col-4'>
@@ -826,38 +717,36 @@ const Home = () => {
 
         <hr />
 
-
-
         {/* Form for Mu and Lambda */}
         {showMuLambda &&
           <>
             <div className='row justify-content-cente'>
               <div className='col-4'>
-                <h1 className='display-6'>Insert the value of Mu and Lambda</h1>
+                <h1 className='display-6'>Mu and Lambda Value</h1>
                 <hr />
                 <form>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="mu">Mu: </label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                     </div>
                   </div>
 
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="lambda">Lambda:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
                     </div>
                   </div>
                   <div className="row mb-4">
-                    <div className='col-4'>
+                    <div className='col-5'>
                       <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
                     </div>
-                    <div className='col-8'>
+                    <div className='col-7'>
                       <input type="number" id="x" value={customervalue} className="form-control" onChange={(event) => { setcustomervalue(event.target.value) }} />
                     </div>
                   </div>
@@ -875,10 +764,65 @@ const Home = () => {
                   </div>
                 </form>
               </div>
+              <div className='col-8 d-flex justify-content-center'>
+                {tableData.length > 0 &&
+                  <div className='row text-center'>
+                    <div className='col-6'>
+                      <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                        <div className="card">
+                          <div className="card-body">
+                            <PieChart
+                              title='Server Utilization'
+                              labels={["Server 1", "Server 2"]}
+                              backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                              data={[server1Utilization, server2Utilization]}
+                              // hoverBackgroundColor=''
+                              width={50}
+                              height={50}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-             
+                    <div className='col-6 p-0'>
+                      <div className='row p-0'>
+                        <div className='col-4 p-0'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "60px", "marginTop": "50px" }}>{queueLength}</h1>
+                                <p className='display-6' style={{ "fontSize": "15px", "marginTop": "70px" }}>Number of customers who wait</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-4 p-0'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "60px", "marginTop": "50px" }}>{idoltimeforserver1}</h1>
+                                <p className='display-6' style={{ "fontSize": "15px", "marginTop": "70px" }}>Idol Time For Server 1</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-4 p-0'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <h1 className='display-1' style={{ "fontSize": "60px", "marginTop": "50px" }}>{idoltimeforserver2}</h1>
+                                <p className='display-6' style={{ "fontSize": "15px", "marginTop": "70px" }}>Idol Time For Server 2</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
             </div>
-
             <hr />
           </>
         }
@@ -910,7 +854,7 @@ const Home = () => {
                   </div>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="priority">Priority:</label>
+                      <label className="form-label" htmlFor="priority">Age:</label>
                     </div>
                     <div className='col-8'>
                       <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
@@ -933,8 +877,6 @@ const Home = () => {
 
               <div className='col-8 d-flex justify-content-center'>
                 <div className='row'>
-
-
                   {tableData.length > 0 &&
                     <div className='col-12'>
                       <div className='row'>
@@ -982,8 +924,7 @@ const Home = () => {
         }
 
         {tableData.length > 0 &&
-          <>
-          
+          <div className='text-center'>
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
@@ -1005,7 +946,7 @@ const Home = () => {
                     <th scope="row">{item.userId}</th>
                     <td>{item.arrivalTime}</td>
                     <td>{item.serviceTime}</td>
-                 
+
                     <td>{item.priority}</td>
                     <td>{item.startTime}</td>
                     <td>{item.endTime}</td>
@@ -1017,69 +958,6 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
-
-
-            <div className='col  '>
-                <div className='row'>
-                  {tableData.length > 0 &&
-                    <div className='col'>
-                      <div className='row'>
-                        <div className='col-3'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <PieChart
-                                  title='Server Utilization'
-                                  labels={["Server 1", "Server 2"]}
-                                  backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
-                                  data={[server1Utilization, server2Utilization]}
-                                  // hoverBackgroundColor=''
-                                  width={50}
-                                  height={50}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                        </div>
-
-                        <div className='col-3'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{queueLength}</h1>
-                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Number of customers who wait</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                         <div className='col-3'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{idoltimeforserver1}</h1>
-                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Idol Time For Server 1</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                         <div className='col-3'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "120px", "marginTop": "50px" }}>{idoltimeforserver2}</h1>
-                                <p className='display-6' style={{ "fontSize": "25px", "marginTop": "70px" }}>Idol Time For Server 2</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
-
-                </div>
-
-              </div>
 
             <div className='row'>
               <div className='col-6'>
@@ -1139,14 +1017,8 @@ const Home = () => {
               </div>
 
             </div>
-
-          </>
+          </div>
         }
-
-
-
-
-
 
       </main>
     </>
