@@ -721,7 +721,7 @@ const Home = () => {
               <form>
                 <div className="row mb-4">
                   <div className='col-5'>
-                    <label className="form-label" htmlFor="mu">Mu: </label>
+                    <label className="form-label" htmlFor="mu">Mu (ST): </label>
                   </div>
                   <div className='col-7'>
                     <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
@@ -730,7 +730,7 @@ const Home = () => {
 
                 <div className="row mb-4">
                   <div className='col-5'>
-                    <label className="form-label" htmlFor="lambda">Lambda:</label>
+                    <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
                   </div>
                   <div className='col-7'>
                     <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
