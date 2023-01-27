@@ -3,39 +3,43 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 
+
+// Declaring Variables , Arrays 
 //Lambda
 let arrivalTime = [];
 //Mu
 let serviceTime = [];
-let temparrival = [];
 let id = 0;
-let interarrival = []
 
+
+//Arryays Used in MU and Lambda Calculations
+let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
 let classintervals = []
-
 let numbetweeninterval = []
-let idoltimeforserver1 = 0;
-let idoltimeforserver2 = 0;
 
+//Dictionaries Having All The Customers After Data Insertions From From Front end
+//Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
-let servername = []
 
+//Servers to Populate
+
+let server1 = [];
+let server2 = [];
+
+//Arrays For Performance Measures From Server1 and Server2 Data
+let servername = []
 let startTime = [];
 let endTime = [];
 let turnAroundTime = [];
 let waitingTime = [];
 let responseTime = [];
 let priority = [];
-let server1 = [];
-let server2 = [];
-
 let queueLength = 0;
 let server1Utilization = 0;
 let server2Utilization = 0;
-
 //Table data
 let data = [];
 
@@ -47,10 +51,13 @@ const Home = () => {
   //Table data, it will be used to show data in table and on graphs
   const [tableData, setTableData] = useState([]);
 
+
+  //Hooks in case of Mu And Lambda  
   const [muValue, setMuValue] = useState("");
   const [lambdaValue, setLambdaValue] = useState("");
-  const [customervalue, setcustomervalue] = useState("");
+  const [SimulationTime, setSimulationTime] = useState("");
 
+  // Hooks In Case of Manual Insertion of Arrival,ServiceTime and No of Customers
   const [arrivalTimevalue, setArrivalTimevalue] = useState("");
   const [serviceTimeValue, setServiceTimeValue] = useState("");
   const [priorityvalue, setpriorityvalue] = useState("");
@@ -71,9 +78,6 @@ const Home = () => {
     id = 0;
     classintervals = []
     servername = []
-
-    idoltimeforserver1 = 0;
-    idoltimeforserver2 = 0;
     responseTime = [];
     server1 = [];
     server2 = [];
@@ -109,25 +113,29 @@ const Home = () => {
 
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
-    if (muValue == "" || lambdaValue == "" || customervalue == "") {
+    if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
       alert("Please enter valid data");
       return;
     }
 
-    let result = Calculateformuuandlambda(customervalue, muValue, lambdaValue)
-
+    // Getting Random Arrival ,Service and priority
+    let result = Calculate_Initial_Columns(SimulationTime, muValue, lambdaValue)
     arrivalTime = result[0]
     serviceTime = result[1]
     priority = result[2]
 
+    //Populating Dictionaries having all the that we'll insert in Both Servers
+    //By Using Customerinfo DIctionarty. we'll populate servers by passing customers one by one to servers on the basis of sorting.
+    //After each Insertion,we'll splice inserted customer from Customer Info
     priority?.map((value, index) => {
-
       CustomerInfo.push({
         userId: ++id,
         ArrivalTimeofcustomer: arrivalTime[index],
         PriorityForCustomer: priority[index],
         ServiceTimeofcustomer: serviceTime[index]
       });
+
+      //This is a duplicate of CustomerInfo to Keep all data till end.
       CustomerInfodup.push({
         userId: id,
         ArrivalTimeofcustomer: arrivalTime[index],
@@ -138,13 +146,11 @@ const Home = () => {
 
     setMuValue("");
     setLambdaValue("");
-    setcustomervalue("")
+    setSimulationTime("")
     // Enable simulate button and reset button
-
     SetSimulateButton(false);
     SetResetButton(false);
   }
-
   const onEntervalue = () => {
     if (arrivalTimevalue == "" || serviceTimeValue == "") {
 
@@ -152,13 +158,14 @@ const Home = () => {
       return;
     }
 
+    //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
     CustomerInfo.push({
       userId: ++id,
       ArrivalTimeofcustomer: arrivalTimevalue,
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
+    //Duplicating CustomerInfo
     CustomerInfodup.push({
       userId: id,
       ArrivalTimeofcustomer: arrivalTimevalue,
@@ -177,41 +184,37 @@ const Home = () => {
     }
 
   };
-
+  //Function For Random servicetime calculation by Mu
   function ServiceRandom(mu) {
-    // find diff
+
+    //max and min is to limit service time , Must be greater Than 0
     let min = 1;
     let max = 5;
     let difference = max - min;
+    //Formula For Random servicetime calculation by Mu
     let rand = -mu * Math.log(1 - Math.random());
     // multiply with difference 
     rand = Math.floor(rand * difference);
-
     // add with min value 
     rand = rand + min;
-
     return rand;
   }
-
+  //Function For Random Priority calculation by Mu
   function PriorityRandom() {
     let min = 1;
-    let max = 90;
+    let max = 90;  //To Limit Priority, Must b'w  1 to 90
     // find diff
     let difference = max - min;
-
     // generate random number 
     let rand = Math.random();
-
     // multiply with difference 
     rand = Math.floor(rand * difference);
-
     // add with min value 
     rand = rand + min;
-
     return rand;
   }
-
-  function arrivalTimeSim(interarrivalArr, x, mu) {
+  ////Function For Random ArrivalTime calculation by Mu
+  function ArrivalRandom(interarrivalArr, x, mu) {
     let priority = []
     let resultforservice = []
     let arrivalArr = [0];
@@ -235,7 +238,7 @@ const Home = () => {
     }
     return [arrivalArr, resultforservice, priority];
   }
-
+  //Function for getting factorial
   function factorial(num) {
     if (num == 0 || num == 1) {
       return 1;
@@ -247,14 +250,17 @@ const Home = () => {
     }
     return f;
   }
-
-  function Calculateformuuandlambda(x, lambda, mu) {
+  //This Function is basically For Calculation OF Initial Columns in Randomness
+  //e.g-cummulative probabability,loopup,number b'w arrivals ,classintervals
+  function Calculate_Initial_Columns(x, lambda, mu) {
     const fact = factorial(x);
     let ita = 0;
     for (let i = 0; i > -1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
       const def = aaa / factorial(i);
       ita = ita + def;
+
+      //If cummulative Probability is less than 1,continue pushing data
       if (ita < 0.9999) {
         //cummulative probabability
         cummulativeprop[i] = ita.toFixed(4);
@@ -264,6 +270,7 @@ const Home = () => {
         //number between intervals
         numbetweeninterval[i] = i;
       }
+      //If cummulative Probability is >= 1,Break 
       else {
 
         break
@@ -272,6 +279,8 @@ const Home = () => {
 
     //loopup probability
     loopupprop.unshift("0.0000")
+
+    //populating class intervals
     cummulativeprop.map((value, index) => {
 
       if (index == 0) {
@@ -294,34 +303,35 @@ const Home = () => {
         )
       }
     })
-
+    //populating interarrival
     numbetweeninterval.map((val, ind) => {
+      //on every iteration , there is a random no, which later we check in class intervals
+
       let varible = Math.random();
       classintervals.map((value, index) => {
-
         let min = value.lowerbound;
         let max = value.upperbound;
-
+        //matching class interval's number(index) will be inter arrival for that customer
         if (varible >= min && varible <= max) {
           interarrival[ind] = numbetweeninterval[index];
         }
       })
     })
-
-    return arrivalTimeSim(interarrival, x, mu)
+    //Calling ArrivalRandom, we'll return arrival,service and priority arrays
+    return ArrivalRandom(interarrival, x, mu)
   }
 
+
+
+   // This function is returning single customer every time on the basis of priority
   function sorting(Customerinfo, serverendtime = 0) {
     let customeri = []
     let readyuser = {}
     let ready111 = {}
-
     Customerinfo?.map((value, index) => {
-
       if (serverendtime == 0) {
         if (CustomerInfo[0].ArrivalTimeofcustomer == value.ArrivalTimeofcustomer) {
           customeri.push(value)
-
         }
       }
       else {
@@ -346,7 +356,7 @@ const Home = () => {
     if (ready111 == undefined) {
       ready111 = customeri[0]
     }
-
+     //getting index of the customer to splice.
     const abc = CustomerInfo.findIndex(x => x.ArrivalTimeofcustomer == ready111.ArrivalTimeofcustomer &&
       x.ServiceTimeofcustomer == ready111.ServiceTimeofcustomer &&
       x.PriorityForCustomer == ready111.PriorityForCustomer);
@@ -370,9 +380,6 @@ const Home = () => {
     CustomerInfodup?.map((value, index) => {
       if (index == 0) {
         const readyforserver = sorting(CustomerInfo)
-        if (readyforserver.ArrivalTimeofcustomer > 0) {
-          idoltimeforserver1 += readyforserver.ArrivalTimeofcustomer - 1
-        }
         server1.push(
           {
             userId: Number(readyforserver.userId),
@@ -387,9 +394,6 @@ const Home = () => {
       if (index == 1) {
         const readyforserver = sorting(CustomerInfo)
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-          if (readyforserver.ArrivalTimeofcustomer > 0) {
-            idoltimeforserver2 += readyforserver.ArrivalTimeofcustomer - 1
-          }
           server2.push(
             {
               userId: Number(readyforserver.userId),
@@ -431,8 +435,6 @@ const Home = () => {
           else {
             const temp = 0;
             if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
-              temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server1[server1.length - 1].endTime))
-              idoltimeforserver1 += temp
               server1.push(
                 {
                   userId: Number(readyforserver.userId),
@@ -486,8 +488,8 @@ const Home = () => {
                 )
               }
               else {
-                temp = Number(Number(readyforserver.ArrivalTimeofcustomer) - Number(server2[server2.length - 1].endTime))
-                idoltimeforserver2 += temp
+
+
                 server2.push(
                   {
                     userId: Number(readyforserver.userId),
@@ -502,9 +504,6 @@ const Home = () => {
           }
           else {
             const readyforserver = sorting(CustomerInfo)
-            if (readyforserver.ArrivalTimeofcustomer > 0) {
-              idoltimeforserver2 += readyforserver.ArrivalTimeofcustomer - 1
-            }
             server2.push(
               {
                 userId: Number(readyforserver.userId),
@@ -666,13 +665,8 @@ const Home = () => {
 
           turnAroundTime: turnAroundTime[index].turnAroundTime,
           waitingTime: waitingTime[index].waitingTime,
-          responseTime: responseTime[index].responseTime,
-          Cummulative_probability: cummulativeprop[index],
-          Loopup_Probability: loopupprop[index],
-          Number_Bw_Arrivals: numbetweeninterval[index],
-          Upperbound: classintervals[index].upperbound,
-          Lowerbound: classintervals[index].lowerbound,
-          Interarrival: interarrival[index]
+          responseTime: responseTime[index].responseTime
+
         }
       )
     })
@@ -747,7 +741,7 @@ const Home = () => {
                       <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
                     </div>
                     <div className='col-7'>
-                      <input type="number" id="x" value={customervalue} className="form-control" onChange={(event) => { setcustomervalue(event.target.value) }} />
+                      <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
                     </div>
                   </div>
 
@@ -785,6 +779,25 @@ const Home = () => {
                       </div>
                     </div>
 
+
+                    <div className='col-6'>
+                      <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                        <div className="card">
+                          <div className="card-body">
+                            <PieChart
+                              title='Idle Time'
+                              labels={["Server 1", "Server 2"]}
+                              backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                              data={[server2Utilization, server1Utilization]}
+                              // hoverBackgroundColor=''
+                              width={50}
+                              height={50}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className='col-6 p-0'>
                       <div className='row p-0'>
                         <div className='col-4 p-0'>
@@ -797,26 +810,7 @@ const Home = () => {
                             </div>
                           </div>
                         </div>
-                        <div className='col-4 p-0'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "60px", "marginTop": "50px" }}>{idoltimeforserver1}</h1>
-                                <p className='display-6' style={{ "fontSize": "15px", "marginTop": "70px" }}>Idol Time For Server 1</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-4 p-0'>
-                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
-                            <div className="card">
-                              <div className="card-body">
-                                <h1 className='display-1' style={{ "fontSize": "60px", "marginTop": "50px" }}>{idoltimeforserver2}</h1>
-                                <p className='display-6' style={{ "fontSize": "15px", "marginTop": "70px" }}>Idol Time For Server 2</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -888,6 +882,24 @@ const Home = () => {
                                   title='Server Utilization'
                                   labels={["Server 1", "Server 2"]}
                                   data={[server1Utilization, server2Utilization]}
+                                  backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                                  // hoverBackgroundColor=''
+                                  width={50}
+                                  height={50}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div className='col-6'>
+                          <div className='container my-4 d-flex justify-content-center' style={{ "height": "360px" }}>
+                            <div className="card">
+                              <div className="card-body">
+                                <PieChart
+                                  title='Idle Time '
+                                  labels={["Server 1", "Server 2"]}
+                                  data={[server2Utilization, server1Utilization]}
                                   backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
                                   // hoverBackgroundColor=''
                                   width={50}
