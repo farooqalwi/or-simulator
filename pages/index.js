@@ -719,40 +719,41 @@ const Home = () => {
               <h1 className='display-6'>Mu and Lambda Value</h1>
               <hr />
               <form>
+                 
                 <div className="row mb-4">
-                  <div className='col-5'>
+                  <div className='col-sm-5'>
                     <label className="form-label" htmlFor="mu">Mu (ST): </label>
                   </div>
-                  <div className='col-7'>
+                  <div className='col-sm-7'>
                     <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                   </div>
                 </div>
 
                 <div className="row mb-4">
-                  <div className='col-5'>
+                  <div className='col-sm-5'>
                     <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
                   </div>
-                  <div className='col-7'>
+                  <div className='col-sm-7'>
                     <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
                   </div>
                 </div>
                 <div className="row mb-4">
-                  <div className='col-5'>
+                  <div className='col-sm-5'>
                     <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
                   </div>
-                  <div className='col-7'>
+                  <div className='col-sm-7'>
                     <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
                   </div>
                 </div>
 
                 <div className='row mb-4'>
-                  <div className='col-4 d-grid gap-2'>
+                  <div className='col-sm-4 mb-2 d-grid gap-2'>
                     <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-success">Enter</button>
                   </div>
-                  <div className='col-4 d-grid gap-2'>
+                  <div className='col-sm-4  mb-2 d-grid gap-2'>
                     <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
                   </div>
-                  <div className='col-4 d-grid gap-2'>
+                  <div className=' col-sm-4 mb-2 d-grid gap-2'>
                     <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
                   </div>
                 </div>
@@ -814,7 +815,7 @@ const Home = () => {
                 {tableData.length > 0 &&
                   <div className='row text-center'>
 
-                    <div className='col-6'>
+                    <div className='col-sm-6'>
                       <div className='container my-4 justify-content-center'>
                         <div className="card">
                           <div className="card-body">
@@ -832,7 +833,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className='col-6'>
+                    <div className='col-sm-6'>
                       <div className='container my-4 justify-content-center'>
                         <div className="card">
                           <div className="card-body">
@@ -871,7 +872,8 @@ const Home = () => {
 
         {/* Displaying the table */}
         {tableData.length > 0 &&
-          <div className='text-center'>
+          <div className=' row text-center'>
+            <div className="col-sm-12">
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
@@ -904,9 +906,10 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
+            </div>
 
             <div className='row'>
-              <div className='col-6'>
+              <div className='col-sm-6'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -920,7 +923,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-6'>
+              <div className='col-sm-6'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -933,8 +936,9 @@ const Home = () => {
                   height={100}
                 />
               </div>
-
-              <div className='col-6'>
+              </div>
+              <div className='row'>
+              <div className='col-sm-6'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -948,7 +952,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-6'>
+              <div className='col-sm-6'>
                 <BarGraph
                   title='Service Time'
                   label='Service Time'
@@ -965,7 +969,7 @@ const Home = () => {
             </div>
           </div>
         }
-
+  
       </main>
     </>
   )
