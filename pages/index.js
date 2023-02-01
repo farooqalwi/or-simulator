@@ -11,7 +11,7 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arryays Used in MU and Lambda Calculations
+//Arrays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
