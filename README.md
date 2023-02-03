@@ -8,7 +8,7 @@ Our Queuing System for Passport Office project is intended to test or demonstrat
 
 Our project has two main components or modules, one deals with manual values while the other deals with mean values which are briefly discusses.
 
-## Mean values by Mu and lambda values:
+## Mean values by Mu and lambda:
 This module uses lambda and Mu as inputs together with time to run a simulator. The system then generates all the performance indicators and graphs necessary to display the behavior of queuing and customer survival.
 ## Manual values (Customer Information):
 This module's system manually inputs client information and then uses that information to produce results, checking behavior in the same way as the mean value module.
