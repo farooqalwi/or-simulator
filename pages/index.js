@@ -112,7 +112,23 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Please enter valid data");
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
+    else if (Number(muValue) > Number(lambdaValue)) {
+      alert("Mu Value cannot be greater than Lambda Value");
+      return;
+    }
+    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
+      alert("Values cannot be zero");
+      return;
+    }
+    else if (Number(lambdaValue) > Number(SimulationTime)) {
+      alert("Lambda Value cannot be greater than Simulation Time");
       return;
     }
 
@@ -151,8 +167,12 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "") {
-      alert("Please enter valid data");
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
+      alert("Values cannot be negative");
       return;
     }
 
@@ -738,10 +758,10 @@ const Home = () => {
                 </div>
                 <div className="row mb-4">
                   <div className='col-5'>
-                    <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
+                    <label className="form-label" htmlFor="time">Time Of Simulation:</label>
                   </div>
                   <div className='col-7'>
-                    <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                    <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
                   </div>
                 </div>
 
