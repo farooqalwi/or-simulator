@@ -171,6 +171,10 @@ const Home = () => {
       alert("Values cannot be empty");
       return;
     }
+    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
+      alert("Remove - sign from 0");
+      return;
+    }
     else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
       alert("Values cannot be negative");
       return;
