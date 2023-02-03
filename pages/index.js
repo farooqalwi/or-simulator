@@ -19,7 +19,7 @@ let loopupprop = []
 let classintervals = []
 let numbetweeninterval = []
 
-//Dictionaries Having All The Customers After Data Insertions From From Front end
+//Dictionaries Having All The Customers After Data Insertions From Front end
 //Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
@@ -97,7 +97,7 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
-    selected.classList.remove("style_background__234fi")
+    selected.classList.remove("style_background__234fi");
     // Reset all data
     resetData();
 
@@ -124,7 +124,7 @@ const Home = () => {
     serviceTime = result[1]
     priority = result[2]
 
-    //Populating Dictionaries having all the that we'll insert in Both Servers
+    //Populating Dictionaries having all that we'll insert in Both Servers
     //By Using Customerinfo DIctionarty. we'll populate servers by passing customers one by one to servers on the basis of sorting.
     //After each Insertion,we'll splice inserted customer from Customer Info
     priority?.map((value, index) => {
@@ -858,7 +858,7 @@ const Home = () => {
                           <div className="card">
                             <div className="card-body">
                               <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
-                              <p className='display-6' style={{ "fontSize": "50px" }}>Customers who wait</p>
+                              <p className='display-6' style={{ "fontSize": "50px" }}>{queueLength>1 ? "Customers" : "Customer"} who wait</p>
                             </div>
                           </div>
                         </div>
