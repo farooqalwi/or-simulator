@@ -11,7 +11,7 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arrays Used in MU and Lambda Calculations
+//Arryays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
@@ -112,7 +112,23 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Please enter valid data");
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
+    else if (Number(muValue) > Number(lambdaValue)) {
+      alert("Mu Value cannot be greater than Lambda Value");
+      return;
+    }
+    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
+      alert("Values cannot be zero");
+      return;
+    }
+    else if (Number(lambdaValue) > Number(SimulationTime)) {
+      alert("Lambda Value cannot be greater than Simulation Time");
       return;
     }
 
@@ -151,8 +167,12 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "") {
-      alert("Please enter valid data");
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
+      alert("Values cannot be negative");
       return;
     }
 
@@ -683,7 +703,7 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="description" content="A simulator based on queueing model M/M/2" />
+        <meta name="OR Simulator" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
@@ -719,41 +739,40 @@ const Home = () => {
               <h1 className='display-6'>Mu and Lambda Value</h1>
               <hr />
               <form>
-                 
                 <div className="row mb-4">
-                  <div className='col-sm-5'>
+                  <div className='col-5'>
                     <label className="form-label" htmlFor="mu">Mu (ST): </label>
                   </div>
-                  <div className='col-sm-7'>
+                  <div className='col-7'>
                     <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                   </div>
                 </div>
 
                 <div className="row mb-4">
-                  <div className='col-sm-5'>
+                  <div className='col-5'>
                     <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
                   </div>
-                  <div className='col-sm-7'>
+                  <div className='col-7'>
                     <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
                   </div>
                 </div>
                 <div className="row mb-4">
-                  <div className='col-sm-5'>
-                    <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
+                  <div className='col-5'>
+                    <label className="form-label" htmlFor="time">Time Of Simulation:</label>
                   </div>
-                  <div className='col-sm-7'>
-                    <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                  <div className='col-7'>
+                    <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
                   </div>
                 </div>
 
                 <div className='row mb-4'>
-                  <div className='col-sm-4 mb-2 d-grid gap-2'>
+                  <div className='col-4 d-grid gap-2'>
                     <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-success">Enter</button>
                   </div>
-                  <div className='col-sm-4  mb-2 d-grid gap-2'>
+                  <div className='col-4 d-grid gap-2'>
                     <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
                   </div>
-                  <div className=' col-sm-4 mb-2 d-grid gap-2'>
+                  <div className='col-4 d-grid gap-2'>
                     <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
                   </div>
                 </div>
@@ -815,7 +834,7 @@ const Home = () => {
                 {tableData.length > 0 &&
                   <div className='row text-center'>
 
-                    <div className='col-sm-6'>
+                    <div className='col-6'>
                       <div className='container my-4 justify-content-center'>
                         <div className="card">
                           <div className="card-body">
@@ -833,7 +852,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className='col-sm-6'>
+                    <div className='col-6'>
                       <div className='container my-4 justify-content-center'>
                         <div className="card">
                           <div className="card-body">
@@ -872,8 +891,7 @@ const Home = () => {
 
         {/* Displaying the table */}
         {tableData.length > 0 &&
-          <div className=' row text-center'>
-            <div className="col-sm-12">
+          <div className='text-center'>
             <table className="table table-bordered table-hover">
               <thead className=''>
                 <tr>
@@ -906,10 +924,9 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
-            </div>
 
             <div className='row'>
-              <div className='col-sm-6'>
+              <div className='col-6'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -923,7 +940,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6'>
+              <div className='col-6'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -936,9 +953,8 @@ const Home = () => {
                   height={100}
                 />
               </div>
-              </div>
-              <div className='row'>
-              <div className='col-sm-6'>
+
+              <div className='col-6'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -952,7 +968,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6'>
+              <div className='col-6'>
                 <BarGraph
                   title='Service Time'
                   label='Service Time'
@@ -969,7 +985,7 @@ const Home = () => {
             </div>
           </div>
         }
-  
+
       </main>
     </>
   )
