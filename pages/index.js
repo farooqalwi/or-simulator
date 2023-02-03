@@ -12,7 +12,7 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arryays Used in MU and Lambda Calculations
+//Arrays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
@@ -97,6 +97,7 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
+    selected.classList.remove("style_background__234fi")
     // Reset all data
     resetData();
 
@@ -113,23 +114,7 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Values cannot be empty");
-      return;
-    }
-    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
-      alert("Values cannot be negative");
-      return;
-    }
-    else if (Number(muValue) > Number(lambdaValue)) {
-      alert("Mu Value cannot be greater than Lambda Value");
-      return;
-    }
-    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
-      alert("Values cannot be zero");
-      return;
-    }
-    else if (Number(lambdaValue) > Number(SimulationTime)) {
-      alert("Lambda Value cannot be greater than Simulation Time");
+      alert("Please enter valid data");
       return;
     }
 
@@ -168,16 +153,8 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
-      alert("Values cannot be empty");
-      return;
-    }
-    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
-      alert("Remove - sign from 0");
-      return;
-    }
-    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
-      alert("Values cannot be negative");
+    if (arrivalTimevalue == "" || serviceTimeValue == "") {
+      alert("Please enter valid data");
       return;
     }
 
@@ -708,7 +685,7 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="OR Simulator" content="A simulator based on queueing model M/M/2" />
+        <meta name="description" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
@@ -720,7 +697,7 @@ const Home = () => {
         {/* Simulator heading and Toggler */}
         <div className='row justify-content-center'>
           <div className='col-12 text-center mb-3'>
-            <h1 className='display-6'>Operation Research Simulator</h1>
+            <h1 className='display-6 fw-semibold'>Operation Research Simulator</h1>
           </div>
           <div className='col-12 text-center'>
             <div className="form-check form-check-inline">
@@ -736,54 +713,55 @@ const Home = () => {
 
         <hr />
 
-        <div className='row justify-content-cente'>
-          {/* Form for Mu and Lambda */}
-          {showMuLambda &&
-            <div className='col-4'>
-              <h1 className='display-6'>Mu and Lambda Value</h1>
-              <hr />
-              <form>
-                 
-                <div className="row mb-4">
-                  <div className='col-sm-5'>
-                    <label className="form-label" htmlFor="mu">Mu (ST): </label>
+        <div className="m-md-4">
+          <div className={`row justify-content-center ${Style.background}`} id='selected'>
+            {/* Form for Mu and Lambda */}
+            {showMuLambda &&
+              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
+                <h1 className='display-6'>Mu and Lambda Value</h1>
+                <hr />
+                <form>
+                  
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="mu">Mu (ST): </label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
+                    </div>
                   </div>
-                  <div className='col-sm-7'>
-                    <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
-                  </div>
-                </div>
 
-                <div className="row mb-4">
-                  <div className='col-sm-5'>
-                    <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
+                    </div>
                   </div>
-                  <div className='col-sm-7'>
-                    <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                    </div>
                   </div>
-                </div>
-                <div className="row mb-4">
-                  <div className='col-sm-5'>
-                    <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
-                  </div>
-                  <div className='col-sm-7'>
-                    <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
-                  </div>
-                </div>
 
-                <div className='row mb-4'>
-                  <div className='col-sm-4 mb-2 d-grid gap-2'>
-                    <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-success">Enter</button>
+                  <div className='row mb-4'>
+                    <div className='col-4 mb-2 d-grid gap-2'>
+                      <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-primary">Enter</button>
+                    </div>
+                    <div className='col-4  mb-2 d-grid gap-2'>
+                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
+                    </div>
+                    <div className=' col-4 mb-2 d-grid gap-2'>
+                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
+                    </div>
                   </div>
-                  <div className='col-sm-4  mb-2 d-grid gap-2'>
-                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
-                  </div>
-                  <div className=' col-sm-4 mb-2 d-grid gap-2'>
-                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          }
+                </form>
+              </div>
+            }
 
             {/* Form for Arrival and Service Time */}
             {showArrSerTime &&
@@ -819,13 +797,13 @@ const Home = () => {
 
                   <div className='row mb-4'>
                     <div className='col-4 d-grid gap-2'>
-                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-success">Enter</button>
+                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-primary">Enter</button>
                     </div>
                     <div className='col-4 d-grid gap-2'>
-                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
+                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
                     </div>
                     <div className='col-4 d-grid gap-2'>
-                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
+                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
                     </div>
                   </div>
                 </form>
@@ -839,41 +817,41 @@ const Home = () => {
                   {tableData.length > 0 &&
                     <div className='row text-center'>
 
-                    <div className='col-sm-6'>
-                      <div className='container my-4 justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <PieChart
-                              title='Server Utilization'
-                              labels={["Server 1", "Server 2"]}
-                              backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
-                              data={[server1Utilization, server2Utilization]}
-                            // hoverBackgroundColor=''
-                            // width={50}
-                            // height={50}
-                            />
+                      <div className='col-md-6 p-0 p-md-2'>
+                        <div className='mb-4 justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <PieChart
+                                title='Server Utilization'
+                                labels={["Server 1", "Server 2"]}
+                                backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                                data={[server1Utilization, server2Utilization]}
+                              // hoverBackgroundColor=''
+                              // width={50}
+                              // height={50}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className='col-sm-6'>
-                      <div className='container my-4 justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <PieChart
-                              title='Idle Time'
-                              labels={["Server 1", "Server 2"]}
-                              backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
-                              data={[server2Utilization, server1Utilization]}
-                            // hoverBackgroundColor=''
-                            // width={50}
-                            // height={50}
-                            />
+                      <div className='col-md-6 p-0 p-md-2'>
+                        <div className='mb-4 justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <PieChart
+                                title='Idle Time'
+                                labels={["Server 1", "Server 2"]}
+                                backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
+                                data={[server2Utilization, server1Utilization]}
+                              // hoverBackgroundColor=''
+                              // width={50}
+                              // height={50}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
                       <div className='col-12 p-0 p-md-2'>
                         <div className='justify-content-center'>
@@ -897,10 +875,10 @@ const Home = () => {
 
         {/* Displaying the table */}
         {tableData.length > 0 &&
-          <div className=' row text-center'>
-            <div className="col-sm-12">
-            <table className="table table-bordered table-hover">
-              <thead className=''>
+          <div className=' row text-center justify-content-center'>
+            <div className={Style.overflowHidden}>
+            <table className="table table-bordered table-hover m-0">
+              <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Arrival Time</th>
@@ -931,9 +909,10 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
+            </div>
 
-            <div className='row'>
-              <div className='col-sm-6'>
+            <div className='row p-0'>
+              <div className='col-sm-6 p-0 pe-md-3'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -947,7 +926,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6'>
+              <div className='col-sm-6 p-0 ps-md-3'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -961,8 +940,8 @@ const Home = () => {
                 />
               </div>
               </div>
-              <div className='row'>
-              <div className='col-sm-6'>
+              <div className='row p-0'>
+              <div className='col-sm-6 p-0 pe-md-3'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -976,7 +955,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6'>
+              <div className='col-sm-6 p-0 ps-md-3'>
                 <BarGraph
                   title='Service Time'
                   label='Service Time'
@@ -993,7 +972,7 @@ const Home = () => {
             </div>
           </div>
         }
-
+  
       </main>
     </>
   )

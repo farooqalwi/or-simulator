@@ -1,11 +1,24 @@
-@media screen and (min-width: 768) {
+@media screen and (min-width: 768px) {
   .overflowHidden{
-    overflow: hidden;
+    overflow-x: hidden !important;
+  }
+
+  .background::after{
+    width: 100vw !important;
+    height: 75vh !important;
   }
 }
 .overflowHidden{
   width: 100%;
-  overflow: scroll;
+  overflow-x: scroll;
   border: 1px solid lightgray;
   padding: 0; 
+}
+
+.background::after{
+  content: '';
+  position: absolute;
+  width: 80vw;
+  height: 50vh;
+  background: url(../img/bg.png) no-repeat center/contain;
 }
