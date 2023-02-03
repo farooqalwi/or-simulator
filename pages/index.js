@@ -179,7 +179,6 @@ const Home = () => {
       alert("Values cannot be negative");
       return;
     }
-
     //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
     CustomerInfo.push({
       userId: ++id,
@@ -187,7 +186,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     //Duplicating CustomerInfo
     CustomerInfodup.push({
       userId: id,
@@ -195,7 +193,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     setArrivalTimevalue("");
     setServiceTimeValue("");
     setpriorityvalue("");
@@ -353,7 +350,6 @@ const Home = () => {
     let customeri = []
     let readyuser = {}
     let ready = {}
-
     Customerinfo?.map((value, index) => {
       if (serverendtime == 0) {
         if (CustomerInfo[0].ArrivalTimeofcustomer == value.ArrivalTimeofcustomer) {
@@ -392,6 +388,21 @@ const Home = () => {
     return ready;
   }
 
+  function Pushing(Server, readyforserver, servername, temp = 0) {
+
+
+    Server.push(
+      {
+        userId: Number(readyforserver.userId),
+        startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
+        endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
+        arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+        server: servername
+      }
+    )
+
+  }
+
   const simulate = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
@@ -407,137 +418,64 @@ const Home = () => {
     CustomerInfodup?.map((value, index) => {
       if (index == 0) {
         const readyforserver = sorting(CustomerInfo)
-        server1.push(
-          {
-            userId: Number(readyforserver.userId),
-            startTime: Number(readyforserver.ArrivalTimeofcustomer),
-            endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-            arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-            server: "Server 1"
-          }
-        )
+        Pushing(server1, readyforserver, "server 1")
       }
 
       if (index == 1) {
         const readyforserver = sorting(CustomerInfo)
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-          server2.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 2"
-            }
-          )
+          Pushing(server2, readyforserver, "server 2")
         }
         else {
-          server1.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 1"
-
-            }
-          )
+          Pushing(server1, readyforserver, "server 1")
         }
       }
-
       if (index > 1) {
-        if (server2.length > 0 && (server1[server1.length - 1].endTime < server2[server2.length - 1].endTime || server1[server1.length - 1].endTime == server2[server2.length - 1].endTime)) {
+
+        if (server2.length > 0 && (server1[server1.length - 1].endTime <= server2[server2.length - 1].endTime)) {
           const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
           if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-            server1.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 1"
-              }
-            )
+            Pushing(server1, readyforserver, "server 1")
           }
           else {
             const temp = 0;
             if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1")
             }
             else {
               temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1", temp)
             }
           }
         }
         else {
-          if (server2.length > 0) {
+          if (server2.length > 0 && (server1[server1.length - 1].endTime > CustomerInfo[0].ArrivalTimeofcustomer)) {
             const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
             if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-              server2.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 2"
-                }
-              )
+              Pushing(server2, readyforserver, "server 2")
             }
             else {
               const temp = 0;
               if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
                 temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2", temp)
               }
               else {
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2")
               }
             }
           }
           else {
-            const readyforserver = sorting(CustomerInfo)
-            server2.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 2"
-              }
-            )
+            const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
+            if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
+              Pushing(server2, readyforserver, "server 2")
+
+            }
+            else {
+
+              Pushing(server1, readyforserver, "server 1")
+            }
+
           }
         }
       }
@@ -666,8 +604,7 @@ const Home = () => {
     })
 
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
-    server2Utilization = Math.round((((Number(server2[server2.length - 1].endTime)) - Number((server2[0].startTime))) / totalServiceTime) * 100);
-
+    server2Utilization = 100 - server1Utilization;
     // Sorting data
     startTime.sort((a, b) => a.userId - b.userId);
     endTime.sort((a, b) => a.userId - b.userId);
@@ -943,7 +880,27 @@ const Home = () => {
                   height={100}
                 />
               </div>
+              <div className='col-6'>
+                <BarGraph
+                  title='Service Time'
+                  label='Service Time'
+                  labels={tableData?.map((item) => "User " + item.userId)}
+                  data={tableData?.map((item) => item.serviceTime)}
+                  backgroundColor='rgba(255, 159, 64, 0.2)'
+                  borderColor='rgba(255, 159, 64, 1)'
+                  borderWidth={1}
+                  width={400}
+                  height={100}
+                />
+              </div>
+            </div>
+          </div>
 
+        }
+        {queueLength > 0 &&
+          <div className='text-center'>
+
+            <div className='row'>
               <div className='col-6'>
                 <BarGraph
                   title='Waiting Time'
@@ -972,22 +929,10 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-6'>
-                <BarGraph
-                  title='Service Time'
-                  label='Service Time'
-                  labels={tableData?.map((item) => "User " + item.userId)}
-                  data={tableData?.map((item) => item.serviceTime)}
-                  backgroundColor='rgba(255, 159, 64, 0.2)'
-                  borderColor='rgba(255, 159, 64, 1)'
-                  borderWidth={1}
-                  width={400}
-                  height={100}
-                />
-              </div>
 
             </div>
           </div>
+
         }
 
       </main>
