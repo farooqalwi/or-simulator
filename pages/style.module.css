@@ -1,0 +1,11 @@
+@media screen and (min-width: 768) {
+  .overflowHidden{
+    overflow: hidden;
+  }
+}
+.overflowHidden{
+  width: 100%;
+  overflow: scroll;
+  border: 1px solid lightgray;
+  padding: 0; 
+}

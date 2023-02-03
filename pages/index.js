@@ -2,6 +2,7 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
+import Style from './style.module.css';
 
 
 // Declaring Variables , Arrays 
@@ -11,7 +12,7 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arrays Used in MU and Lambda Calculations
+//Arryays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
@@ -112,7 +113,23 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Please enter valid data");
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
+    else if (Number(muValue) > Number(lambdaValue)) {
+      alert("Mu Value cannot be greater than Lambda Value");
+      return;
+    }
+    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
+      alert("Values cannot be zero");
+      return;
+    }
+    else if (Number(lambdaValue) > Number(SimulationTime)) {
+      alert("Lambda Value cannot be greater than Simulation Time");
       return;
     }
 
@@ -151,8 +168,16 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "") {
-      alert("Please enter valid data");
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
+      alert("Remove - sign from 0");
+      return;
+    }
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
+      alert("Values cannot be negative");
       return;
     }
 
@@ -683,7 +708,7 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="description" content="A simulator based on queueing model M/M/2" />
+        <meta name="OR Simulator" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
@@ -693,8 +718,11 @@ const Home = () => {
       <main className="m-4">
 
         {/* Simulator heading and Toggler */}
-        <div className='row'>
-          <div className='col-4'>
+        <div className='row justify-content-center'>
+          <div className='col-12 text-center mb-3'>
+            <h1 className='display-6'>Operation Research Simulator</h1>
+          </div>
+          <div className='col-12 text-center'>
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("MuLambda")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" />
               <label className="form-check-label" htmlFor="inlineRadio1">Mu and Lambda</label>
@@ -703,10 +731,6 @@ const Home = () => {
               <input onClick={() => toggleParameter("ArrSerTime")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
               <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
             </div>
-          </div>
-
-          <div className='col-8'>
-            <h1 className='display-6'>Operation Research Simulator</h1>
           </div>
         </div>
 
@@ -761,59 +785,59 @@ const Home = () => {
             </div>
           }
 
-          {/* Form for Arrival and Service Time */}
-          {showArrSerTime &&
-            <div className='col-4'>
-              <h1 className='display-6'>Customer Info</h1>
-              <hr />
-              <form>
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
+            {/* Form for Arrival and Service Time */}
+            {showArrSerTime &&
+              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
+                <h1 className='display-6'>Customer Info</h1>
+                <hr />
+                <form>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
+                    </div>
                   </div>
-                  <div className='col-8'>
-                    <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
-                  </div>
-                </div>
 
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="serviceTime">Service Time:</label>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="serviceTime">Service Time:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
+                    </div>
                   </div>
-                  <div className='col-8'>
-                    <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="priority">Age:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
+                    </div>
                   </div>
-                </div>
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="priority">Age:</label>
-                  </div>
-                  <div className='col-8'>
-                    <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
-                  </div>
-                </div>
 
-                <div className='row mb-4'>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-success">Enter</button>
+                  <div className='row mb-4'>
+                    <div className='col-4 d-grid gap-2'>
+                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-success">Enter</button>
+                    </div>
+                    <div className='col-4 d-grid gap-2'>
+                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
+                    </div>
+                    <div className='col-4 d-grid gap-2'>
+                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
+                    </div>
                   </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
-                  </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          }
+                </form>
+              </div>
+            }
 
-          {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
-          {(showMuLambda || showArrSerTime) &&
-            <>
-              <div className='col-8 pb-3 d-flex justify-content-center'>
-                {tableData.length > 0 &&
-                  <div className='row text-center'>
+            {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
+            {(showMuLambda || showArrSerTime) &&
+              <>
+                <div className='col-12 py-4 d-flex justify-content-center'>
+                  {tableData.length > 0 &&
+                    <div className='row text-center'>
 
                     <div className='col-sm-6'>
                       <div className='container my-4 justify-content-center'>
@@ -851,23 +875,24 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className='col-12'>
-                      <div className='container justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
-                            <p className='display-6' style={{ "fontSize": "50px" }}>Number of customers who wait</p>
+                      <div className='col-12 p-0 p-md-2'>
+                        <div className='justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
+                              <p className='display-6' style={{ "fontSize": "50px" }}>Customers who wait</p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                }
-              </div>
+                  }
+                </div>
 
-              <hr />
-            </>
-          }
+                <hr />
+              </>
+            }
+          </div>
         </div>
 
         {/* Displaying the table */}
@@ -906,7 +931,6 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
-            </div>
 
             <div className='row'>
               <div className='col-sm-6'>
@@ -969,7 +993,7 @@ const Home = () => {
             </div>
           </div>
         }
-  
+
       </main>
     </>
   )
