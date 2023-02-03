@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 
+
 // Declaring Variables , Arrays 
 //Lambda
 let arrivalTime = [];
