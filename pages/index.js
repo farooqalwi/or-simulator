@@ -2,7 +2,6 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
-import Style from './style.module.css';
 
 
 // Declaring Variables , Arrays 
@@ -12,14 +11,14 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arrays Used in MU and Lambda Calculations
+//Arryays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
 let classintervals = []
 let numbetweeninterval = []
 
-//Dictionaries Having All The Customers After Data Insertions From Front end
+//Dictionaries Having All The Customers After Data Insertions From From Front end
 //Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
@@ -97,7 +96,6 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
-    selected.classList.remove("style_background__234fi");
     // Reset all data
     resetData();
 
@@ -114,7 +112,23 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Please enter valid data");
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
+    else if (Number(muValue) > Number(lambdaValue)) {
+      alert("Mu Value cannot be greater than Lambda Value");
+      return;
+    }
+    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
+      alert("Values cannot be zero");
+      return;
+    }
+    else if (Number(lambdaValue) > Number(SimulationTime)) {
+      alert("Lambda Value cannot be greater than Simulation Time");
       return;
     }
 
@@ -124,7 +138,7 @@ const Home = () => {
     serviceTime = result[1]
     priority = result[2]
 
-    //Populating Dictionaries having all that we'll insert in Both Servers
+    //Populating Dictionaries having all the that we'll insert in Both Servers
     //By Using Customerinfo DIctionarty. we'll populate servers by passing customers one by one to servers on the basis of sorting.
     //After each Insertion,we'll splice inserted customer from Customer Info
     priority?.map((value, index) => {
@@ -153,11 +167,18 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "") {
-      alert("Please enter valid data");
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
+      alert("Values cannot be empty");
       return;
     }
-
+    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
+      alert("Remove - sign from 0");
+      return;
+    }
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
     //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
     CustomerInfo.push({
       userId: ++id,
@@ -165,7 +186,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     //Duplicating CustomerInfo
     CustomerInfodup.push({
       userId: id,
@@ -173,7 +193,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     setArrivalTimevalue("");
     setServiceTimeValue("");
     setpriorityvalue("");
@@ -331,7 +350,6 @@ const Home = () => {
     let customeri = []
     let readyuser = {}
     let ready = {}
-
     Customerinfo?.map((value, index) => {
       if (serverendtime == 0) {
         if (CustomerInfo[0].ArrivalTimeofcustomer == value.ArrivalTimeofcustomer) {
@@ -370,6 +388,21 @@ const Home = () => {
     return ready;
   }
 
+  function Pushing(Server, readyforserver, servername, temp = 0) {
+
+
+    Server.push(
+      {
+        userId: Number(readyforserver.userId),
+        startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
+        endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
+        arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+        server: servername
+      }
+    )
+
+  }
+
   const simulate = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
@@ -385,137 +418,64 @@ const Home = () => {
     CustomerInfodup?.map((value, index) => {
       if (index == 0) {
         const readyforserver = sorting(CustomerInfo)
-        server1.push(
-          {
-            userId: Number(readyforserver.userId),
-            startTime: Number(readyforserver.ArrivalTimeofcustomer),
-            endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-            arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-            server: "Server 1"
-          }
-        )
+        Pushing(server1, readyforserver, "server 1")
       }
 
       if (index == 1) {
         const readyforserver = sorting(CustomerInfo)
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-          server2.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 2"
-            }
-          )
+          Pushing(server2, readyforserver, "server 2")
         }
         else {
-          server1.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 1"
-
-            }
-          )
+          Pushing(server1, readyforserver, "server 1")
         }
       }
-
       if (index > 1) {
-        if (server2.length > 0 && (server1[server1.length - 1].endTime < server2[server2.length - 1].endTime || server1[server1.length - 1].endTime == server2[server2.length - 1].endTime)) {
+
+        if (server2.length > 0 && (server1[server1.length - 1].endTime <= server2[server2.length - 1].endTime)) {
           const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
           if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-            server1.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 1"
-              }
-            )
+            Pushing(server1, readyforserver, "server 1")
           }
           else {
             const temp = 0;
             if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1")
             }
             else {
               temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1", temp)
             }
           }
         }
         else {
-          if (server2.length > 0) {
+          if (server2.length > 0 && (server1[server1.length - 1].endTime > CustomerInfo[0].ArrivalTimeofcustomer)) {
             const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
             if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-              server2.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 2"
-                }
-              )
+              Pushing(server2, readyforserver, "server 2")
             }
             else {
               const temp = 0;
               if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
                 temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2", temp)
               }
               else {
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2")
               }
             }
           }
           else {
-            const readyforserver = sorting(CustomerInfo)
-            server2.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 2"
-              }
-            )
+            const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
+            if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
+              Pushing(server2, readyforserver, "server 2")
+
+            }
+            else {
+
+              Pushing(server1, readyforserver, "server 1")
+            }
+
           }
         }
       }
@@ -644,8 +604,7 @@ const Home = () => {
     })
 
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
-    server2Utilization = Math.round((((Number(server2[server2.length - 1].endTime)) - Number((server2[0].startTime))) / totalServiceTime) * 100);
-
+    server2Utilization = 100 - server1Utilization;
     // Sorting data
     startTime.sort((a, b) => a.userId - b.userId);
     endTime.sort((a, b) => a.userId - b.userId);
@@ -685,7 +644,7 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="description" content="A simulator based on queueing model M/M/2" />
+        <meta name="OR Simulator" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
@@ -695,11 +654,8 @@ const Home = () => {
       <main className="m-4">
 
         {/* Simulator heading and Toggler */}
-        <div className='row justify-content-center'>
-          <div className='col-12 text-center mb-3'>
-            <h1 className='display-6 fw-semibold'>Operation Research Simulator</h1>
-          </div>
-          <div className='col-12 text-center'>
+        <div className='row'>
+          <div className='col-4'>
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("MuLambda")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" />
               <label className="form-check-label" htmlFor="inlineRadio1">Mu and Lambda</label>
@@ -709,176 +665,176 @@ const Home = () => {
               <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
             </div>
           </div>
+
+          <div className='col-8'>
+            <h1 className='display-6'>Operation Research Simulator</h1>
+          </div>
         </div>
 
         <hr />
 
-        <div className="m-md-4">
-          <div className={`row justify-content-center ${Style.background}`} id='selected'>
-            {/* Form for Mu and Lambda */}
-            {showMuLambda &&
-              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
-                <h1 className='display-6'>Mu and Lambda Value</h1>
-                <hr />
-                <form>
-                  
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="mu">Mu (ST): </label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
-                    </div>
+        <div className='row justify-content-cente'>
+          {/* Form for Mu and Lambda */}
+          {showMuLambda &&
+            <div className='col-4'>
+              <h1 className='display-6'>Mu and Lambda Value</h1>
+              <hr />
+              <form>
+                <div className="row mb-4">
+                  <div className='col-5'>
+                    <label className="form-label" htmlFor="mu">Mu (ST): </label>
                   </div>
-
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
-                    </div>
+                  <div className='col-7'>
+                    <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                   </div>
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
-                    </div>
-                  </div>
-
-                  <div className='row mb-4'>
-                    <div className='col-4 mb-2 d-grid gap-2'>
-                      <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-primary">Enter</button>
-                    </div>
-                    <div className='col-4  mb-2 d-grid gap-2'>
-                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
-                    </div>
-                    <div className=' col-4 mb-2 d-grid gap-2'>
-                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            }
-
-            {/* Form for Arrival and Service Time */}
-            {showArrSerTime &&
-              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
-                <h1 className='display-6'>Customer Info</h1>
-                <hr />
-                <form>
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
-                    </div>
-                  </div>
-
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="serviceTime">Service Time:</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
-                    </div>
-                  </div>
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="priority">Age:</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
-                    </div>
-                  </div>
-
-                  <div className='row mb-4'>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-primary">Enter</button>
-                    </div>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
-                    </div>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            }
-
-            {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
-            {(showMuLambda || showArrSerTime) &&
-              <>
-                <div className='col-12 py-4 d-flex justify-content-center'>
-                  {tableData.length > 0 &&
-                    <div className='row text-center'>
-
-                      <div className='col-md-6 p-0 p-md-2'>
-                        <div className='mb-4 justify-content-center'>
-                          <div className="card">
-                            <div className="card-body">
-                              <PieChart
-                                title='Server Utilization'
-                                labels={["Server 1", "Server 2"]}
-                                backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
-                                data={[server1Utilization, server2Utilization]}
-                              // hoverBackgroundColor=''
-                              // width={50}
-                              // height={50}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='col-md-6 p-0 p-md-2'>
-                        <div className='mb-4 justify-content-center'>
-                          <div className="card">
-                            <div className="card-body">
-                              <PieChart
-                                title='Idle Time'
-                                labels={["Server 1", "Server 2"]}
-                                backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
-                                data={[server2Utilization, server1Utilization]}
-                              // hoverBackgroundColor=''
-                              // width={50}
-                              // height={50}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='col-12 p-0 p-md-2'>
-                        <div className='justify-content-center'>
-                          <div className="card">
-                            <div className="card-body">
-                              <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
-                              <p className='display-6' style={{ "fontSize": "50px" }}>{queueLength>1 ? "Customers" : "Customer"} who wait</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
                 </div>
 
-                <hr />
-              </>
-            }
-          </div>
+                <div className="row mb-4">
+                  <div className='col-5'>
+                    <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
+                  </div>
+                  <div className='col-7'>
+                    <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
+                  </div>
+                </div>
+                <div className="row mb-4">
+                  <div className='col-5'>
+                    <label className="form-label" htmlFor="time">Time Of Simulation:</label>
+                  </div>
+                  <div className='col-7'>
+                    <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                  </div>
+                </div>
+
+                <div className='row mb-4'>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-success">Enter</button>
+                  </div>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
+                  </div>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          }
+
+          {/* Form for Arrival and Service Time */}
+          {showArrSerTime &&
+            <div className='col-4'>
+              <h1 className='display-6'>Customer Info</h1>
+              <hr />
+              <form>
+                <div className="row mb-4">
+                  <div className='col-4'>
+                    <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
+                  </div>
+                  <div className='col-8'>
+                    <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
+                  </div>
+                </div>
+
+                <div className="row mb-4">
+                  <div className='col-4'>
+                    <label className="form-label" htmlFor="serviceTime">Service Time:</label>
+                  </div>
+                  <div className='col-8'>
+                    <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
+                  </div>
+                </div>
+                <div className="row mb-4">
+                  <div className='col-4'>
+                    <label className="form-label" htmlFor="priority">Age:</label>
+                  </div>
+                  <div className='col-8'>
+                    <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
+                  </div>
+                </div>
+
+                <div className='row mb-4'>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-success">Enter</button>
+                  </div>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
+                  </div>
+                  <div className='col-4 d-grid gap-2'>
+                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          }
+
+          {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
+          {(showMuLambda || showArrSerTime) &&
+            <>
+              <div className='col-8 pb-3 d-flex justify-content-center'>
+                {tableData.length > 0 &&
+                  <div className='row text-center'>
+
+                    <div className='col-6'>
+                      <div className='container my-4 justify-content-center'>
+                        <div className="card">
+                          <div className="card-body">
+                            <PieChart
+                              title='Server Utilization'
+                              labels={["Server 1", "Server 2"]}
+                              backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                              data={[server1Utilization, server2Utilization]}
+                            // hoverBackgroundColor=''
+                            // width={50}
+                            // height={50}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='col-6'>
+                      <div className='container my-4 justify-content-center'>
+                        <div className="card">
+                          <div className="card-body">
+                            <PieChart
+                              title='Idle Time'
+                              labels={["Server 1", "Server 2"]}
+                              backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
+                              data={[server2Utilization, server1Utilization]}
+                            // hoverBackgroundColor=''
+                            // width={50}
+                            // height={50}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='col-12'>
+                      <div className='container justify-content-center'>
+                        <div className="card">
+                          <div className="card-body">
+                            <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
+                            <p className='display-6' style={{ "fontSize": "50px" }}>Number of customers who wait</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <hr />
+            </>
+          }
         </div>
 
         {/* Displaying the table */}
         {tableData.length > 0 &&
-          <div className=' row text-center justify-content-center'>
-            <div className={Style.overflowHidden}>
-            <table className="table table-bordered table-hover m-0">
-              <thead>
+          <div className='text-center'>
+            <table className="table table-bordered table-hover">
+              <thead className=''>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Arrival Time</th>
@@ -909,10 +865,9 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
-            </div>
 
-            <div className='row p-0'>
-              <div className='col-sm-6 p-0 pe-md-3'>
+            <div className='row'>
+              <div className='col-6'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -925,8 +880,28 @@ const Home = () => {
                   height={100}
                 />
               </div>
+              <div className='col-6'>
+                <BarGraph
+                  title='Service Time'
+                  label='Service Time'
+                  labels={tableData?.map((item) => "User " + item.userId)}
+                  data={tableData?.map((item) => item.serviceTime)}
+                  backgroundColor='rgba(255, 159, 64, 0.2)'
+                  borderColor='rgba(255, 159, 64, 1)'
+                  borderWidth={1}
+                  width={400}
+                  height={100}
+                />
+              </div>
+            </div>
+          </div>
 
-              <div className='col-sm-6 p-0 ps-md-3'>
+        }
+        {queueLength > 0 &&
+          <div className='text-center'>
+
+            <div className='row'>
+              <div className='col-6'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -939,9 +914,8 @@ const Home = () => {
                   height={100}
                 />
               </div>
-              </div>
-              <div className='row p-0'>
-              <div className='col-sm-6 p-0 pe-md-3'>
+
+              <div className='col-6'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -955,24 +929,12 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6 p-0 ps-md-3'>
-                <BarGraph
-                  title='Service Time'
-                  label='Service Time'
-                  labels={tableData?.map((item) => "User " + item.userId)}
-                  data={tableData?.map((item) => item.serviceTime)}
-                  backgroundColor='rgba(255, 159, 64, 0.2)'
-                  borderColor='rgba(255, 159, 64, 1)'
-                  borderWidth={1}
-                  width={400}
-                  height={100}
-                />
-              </div>
 
             </div>
           </div>
+
         }
-  
+
       </main>
     </>
   )
