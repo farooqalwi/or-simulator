@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
-import Style from '../styles/Home.module.css';
+import Style from '../styles/responsive.module.css';
 
 // Declaring Variables , Arrays 
 //Lambda
@@ -96,7 +96,7 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
-    selected.classList.remove("style_background__234fi");
+    selected.classList.remove("responsive_background__uLfrK");
     // Reset all data
     resetData();
 
@@ -708,16 +708,11 @@ const Home = () => {
                     </div>
                   </div>
 
-                  <div className='row mb-4'>
-                    <div className='col-4 mb-2 d-grid gap-2'>
-                      <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-primary">Enter</button>
-                    </div>
-                    <div className='col-4  mb-2 d-grid gap-2'>
-                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
-                    </div>
-                    <div className=' col-4 mb-2 d-grid gap-2'>
-                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
-                    </div>
+                  <div className='row mb-4 px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
+                      <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="col-3 col-md-3 btn btn-primary">Enter</button>
+                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="col-4 col-md-3  btn btn-success">Simulate</button>
+                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className=" col-3 col-md-3 btn btn-danger">Reset</button>
+                    
                   </div>
                 </form>
               </div>
@@ -755,16 +750,13 @@ const Home = () => {
                     </div>
                   </div>
 
-                  <div className='row mb-4'>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-primary">Enter</button>
-                    </div>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-success">Simulate</button>
-                    </div>
-                    <div className='col-4 d-grid gap-2'>
-                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-danger">Reset</button>
-                    </div>
+                  <div className='row px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
+                      <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="col-3 col-md-3 btn btn-primary">Enter</button>
+                    
+                      <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="col-4 col-md-3 btn btn-success">Simulate</button>
+                    
+                      <button disabled={ResetButton} type="button" onClick={() => resetData()} className="col-3 col-md-3 btn btn-danger">Reset</button>
+              
                   </div>
                 </form>
               </div>
@@ -773,10 +765,10 @@ const Home = () => {
             {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
             {(showMuLambda || showArrSerTime) &&
               <>
-                <div className='col-12 py-4 d-flex justify-content-center'>
+                <div className='col-md-12 p-md-2 p-3'>
                   {tableData.length > 0 &&
-                    <div className='row text-center'>
 
+                    <div className='row text-center'>
                       <div className='col-md-6 p-0 p-md-2'>
                         <div className='mb-4 justify-content-center'>
                           <div className="card">
@@ -872,7 +864,7 @@ const Home = () => {
             </div>
 
             <div className='row p-0'>
-              <div className='col-sm-6 p-0 pe-md-3'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -886,7 +878,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6 p-0 ps-md-3'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -901,7 +893,7 @@ const Home = () => {
               </div>
               </div>
               <div className='row p-0'>
-              <div className='col-sm-6 p-0 pe-md-3'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -915,7 +907,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6 p-0 ps-md-3'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Service Time'
                   label='Service Time'
