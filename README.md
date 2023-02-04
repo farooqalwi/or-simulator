@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Queuing System for Passport Office
 
-First, run the development server:
+Our Queuing System for Passport Office project is intended to test or demonstrate the behavior of queuing and client survival at passport offices. It works for both priority and multi-server processes. Our aim is to manage the waiting time and service time on counters using queuing theory steady state measures of performance. Queuing theory is the study of queues of waiting lines. The method is efficient to manage tickets at a fast pace because some of the analysis that can be derived using queuing theory include the expected waiting time in the queue, the average time in the system, the expected queue length, the expected number of people served at one time, the probability of balking public, as well as probability of system to be empty or full.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Feartures and Component
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Our project has two main components or modules, one deals with manual values while the other deals with mean values which are briefly discusses.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Mean values by Mu and lambda:
+This module uses lambda and Mu as inputs together with time to run a simulator. The system then generates all the performance indicators and graphs necessary to display the behavior of queuing and customer survival.
+## Manual values (Customer Information):
+This module's system manually inputs client information and then uses that information to produce results, checking behavior in the same way as the mean value module.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The system generates certain graphs and other objects to display the outcomes.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Server utilization and idle time: For this, a pie chart is created to display the servers' utilization and free time ratios.
 
-## Learn More
+Number of waiting customers: It is a card that displays how many customers are currently waiting during a simulation.
 
-To learn more about Next.js, take a look at the following resources:
+Generate Table: This table displays all the data for each attribute that is used to simulate events, such as arrival time, turnaround time, and service time.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Bar Graphs: It is used to graphically display all clients' turnaround times, waiting times, response times, and service times. 

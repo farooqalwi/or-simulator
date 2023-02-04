@@ -2,8 +2,7 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
-import Style from './style.module.css';
-
+import Style from '../styles/Home.module.css';
 
 // Declaring Variables , Arrays 
 //Lambda
@@ -12,14 +11,14 @@ let arrivalTime = [];
 let serviceTime = [];
 let id = 0;
 
-//Arrays Used in MU and Lambda Calculations
+//Arryays Used in MU and Lambda Calculations
 let interarrival = []
 let cummulativeprop = []
 let loopupprop = []
 let classintervals = []
 let numbetweeninterval = []
 
-//Dictionaries Having All The Customers After Data Insertions From Front end
+//Dictionaries Having All The Customers After Data Insertions From From Front end
 //Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
@@ -97,7 +96,6 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
-    selected.classList.remove("style_background__234fi");
     // Reset all data
     resetData();
 
@@ -114,7 +112,23 @@ const Home = () => {
   // Retrieving Mu and Lambda from user
   const onMuLambdaEnter = () => {
     if (muValue == "" || lambdaValue == "" || SimulationTime == "") {
-      alert("Please enter valid data");
+      alert("Values cannot be empty");
+      return;
+    }
+    else if (Number(muValue) < 0 || Number(lambdaValue) < 0 || Number(SimulationTime) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
+    else if (Number(muValue) > Number(lambdaValue)) {
+      alert("Mu Value cannot be greater than Lambda Value");
+      return;
+    }
+    else if (Number(muValue) == 0 || Number(lambdaValue) == 0 || Number(SimulationTime) == 0) {
+      alert("Values cannot be zero");
+      return;
+    }
+    else if (Number(lambdaValue) > Number(SimulationTime)) {
+      alert("Lambda Value cannot be greater than Simulation Time");
       return;
     }
 
@@ -153,11 +167,18 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "") {
-      alert("Please enter valid data");
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
+      alert("Values cannot be empty");
       return;
     }
-
+    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
+      alert("Remove - sign from 0");
+      return;
+    }
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
+      alert("Values cannot be negative");
+      return;
+    }
     //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
     CustomerInfo.push({
       userId: ++id,
@@ -165,7 +186,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     //Duplicating CustomerInfo
     CustomerInfodup.push({
       userId: id,
@@ -173,7 +193,6 @@ const Home = () => {
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-
     setArrivalTimevalue("");
     setServiceTimeValue("");
     setpriorityvalue("");
@@ -331,7 +350,6 @@ const Home = () => {
     let customeri = []
     let readyuser = {}
     let ready = {}
-
     Customerinfo?.map((value, index) => {
       if (serverendtime == 0) {
         if (CustomerInfo[0].ArrivalTimeofcustomer == value.ArrivalTimeofcustomer) {
@@ -370,6 +388,21 @@ const Home = () => {
     return ready;
   }
 
+  function Pushing(Server, readyforserver, servername, temp = 0) {
+
+
+    Server.push(
+      {
+        userId: Number(readyforserver.userId),
+        startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
+        endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
+        arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
+        server: servername
+      }
+    )
+
+  }
+
   const simulate = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
@@ -385,137 +418,64 @@ const Home = () => {
     CustomerInfodup?.map((value, index) => {
       if (index == 0) {
         const readyforserver = sorting(CustomerInfo)
-        server1.push(
-          {
-            userId: Number(readyforserver.userId),
-            startTime: Number(readyforserver.ArrivalTimeofcustomer),
-            endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-            arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-            server: "Server 1"
-          }
-        )
+        Pushing(server1, readyforserver, "server 1")
       }
 
       if (index == 1) {
         const readyforserver = sorting(CustomerInfo)
         if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-          server2.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 2"
-            }
-          )
+          Pushing(server2, readyforserver, "server 2")
         }
         else {
-          server1.push(
-            {
-              userId: Number(readyforserver.userId),
-              startTime: Number(readyforserver.ArrivalTimeofcustomer),
-              endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-              arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-              server: "Server 1"
-
-            }
-          )
+          Pushing(server1, readyforserver, "server 1")
         }
       }
-
       if (index > 1) {
-        if (server2.length > 0 && (server1[server1.length - 1].endTime < server2[server2.length - 1].endTime || server1[server1.length - 1].endTime == server2[server2.length - 1].endTime)) {
+
+        if (server2.length > 0 && (server1[server1.length - 1].endTime <= server2[server2.length - 1].endTime)) {
           const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
           if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-            server1.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 1"
-              }
-            )
+            Pushing(server1, readyforserver, "server 1")
           }
           else {
             const temp = 0;
             if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1")
             }
             else {
               temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-              server1.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 1"
-                }
-              )
+              Pushing(server1, readyforserver, "server 1", temp)
             }
           }
         }
         else {
-          if (server2.length > 0) {
+          if (server2.length > 0 && (server1[server1.length - 1].endTime > CustomerInfo[0].ArrivalTimeofcustomer)) {
             const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
             if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-              server2.push(
-                {
-                  userId: Number(readyforserver.userId),
-                  startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                  endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                  arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                  server: "Server 2"
-                }
-              )
+              Pushing(server2, readyforserver, "server 2")
             }
             else {
               const temp = 0;
               if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
                 temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(temp) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2", temp)
               }
               else {
-                server2.push(
-                  {
-                    userId: Number(readyforserver.userId),
-                    startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                    endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                    arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                    server: "Server 2"
-                  }
-                )
+                Pushing(server2, readyforserver, "server 2")
               }
             }
           }
           else {
-            const readyforserver = sorting(CustomerInfo)
-            server2.push(
-              {
-                userId: Number(readyforserver.userId),
-                startTime: Number(readyforserver.ArrivalTimeofcustomer),
-                endTime: Number(readyforserver.ArrivalTimeofcustomer) + Number(readyforserver.ServiceTimeofcustomer),
-                arrrivaltime: Number(readyforserver.ArrivalTimeofcustomer),
-                server: "Server 2"
-              }
-            )
+            const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
+            if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
+              Pushing(server2, readyforserver, "server 2")
+
+            }
+            else {
+
+              Pushing(server1, readyforserver, "server 1")
+            }
+
           }
         }
       }
@@ -644,8 +604,7 @@ const Home = () => {
     })
 
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
-    server2Utilization = Math.round((((Number(server2[server2.length - 1].endTime)) - Number((server2[0].startTime))) / totalServiceTime) * 100);
-
+    server2Utilization = 100 - server1Utilization;
     // Sorting data
     startTime.sort((a, b) => a.userId - b.userId);
     endTime.sort((a, b) => a.userId - b.userId);
@@ -685,7 +644,7 @@ const Home = () => {
     <>
       <Head>
         <title>OR Simulator</title>
-        <meta name="description" content="A simulator based on queueing model M/M/2" />
+        <meta name="OR Simulator" content="A simulator based on queueing model M/M/2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossOrigin="anonymous"></link>
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
@@ -741,10 +700,10 @@ const Home = () => {
                   </div>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="lambda">Time Of Simulation:</label>
+                      <label className="form-label" htmlFor="time">Time Of Simulation:</label>
                     </div>
                     <div className='col-8'>
-                      <input type="number" id="x" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                      <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
                     </div>
                   </div>
 
