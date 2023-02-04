@@ -96,6 +96,7 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
+    selected.classList.remove("style_background__234fi");
     // Reset all data
     resetData();
 
