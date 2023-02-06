@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
-
+import Style from '../styles/responsive.module.css';
 
 // Declaring Variables , Arrays 
 //Lambda
@@ -96,6 +96,7 @@ const Home = () => {
 
   //Toggle Mu and Lambda or Arrival time and service time
   const toggleParameter = (parameter) => {
+    selected.classList.remove("responsive_background__uLfrK");
     // Reset all data
     resetData();
 
@@ -654,8 +655,11 @@ const Home = () => {
       <main className="m-4">
 
         {/* Simulator heading and Toggler */}
-        <div className='row'>
-          <div className='col-4'>
+        <div className='row justify-content-center'>
+          <div className='col-12 text-center mb-3'>
+            <h1 className='display-6 fw-semibold'>Operation Research Simulator</h1>
+          </div>
+          <div className='col-12 text-center'>
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("MuLambda")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" />
               <label className="form-check-label" htmlFor="inlineRadio1">Mu and Lambda</label>
@@ -665,209 +669,202 @@ const Home = () => {
               <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
             </div>
           </div>
-
-          <div className='col-8'>
-            <h1 className='display-6'>Operation Research Simulator</h1>
-          </div>
         </div>
 
         <hr />
 
-        <div className='row justify-content-cente'>
-          {/* Form for Mu and Lambda */}
-          {showMuLambda &&
-            <div className='col-4'>
-              <h1 className='display-6'>Mu and Lambda Value</h1>
-              <hr />
-              <form>
-                <div className="row mb-4">
-                  <div className='col-5'>
-                    <label className="form-label" htmlFor="mu">Mu (ST): </label>
-                  </div>
-                  <div className='col-7'>
-                    <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
-                  </div>
-                </div>
+        <div className="m-md-4">
+          <div className={`row justify-content-center ${Style.background}`} id='selected'>
+            {/* Form for Mu and Lambda */}
+            {showMuLambda &&
+              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
+                <h1 className='display-6'>Mu and Lambda Value</h1>
+                <hr />
+                <form>
 
-                <div className="row mb-4">
-                  <div className='col-5'>
-                    <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
-                  </div>
-                  <div className='col-7'>
-                    <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
-                  </div>
-                </div>
-                <div className="row mb-4">
-                  <div className='col-5'>
-                    <label className="form-label" htmlFor="time">Time Of Simulation:</label>
-                  </div>
-                  <div className='col-7'>
-                    <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
-                  </div>
-                </div>
-
-                <div className='row mb-4'>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="btn btn-success">Enter</button>
-                  </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
-                  </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          }
-
-          {/* Form for Arrival and Service Time */}
-          {showArrSerTime &&
-            <div className='col-4'>
-              <h1 className='display-6'>Customer Info</h1>
-              <hr />
-              <form>
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
-                  </div>
-                  <div className='col-8'>
-                    <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
-                  </div>
-                </div>
-
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="serviceTime">Service Time:</label>
-                  </div>
-                  <div className='col-8'>
-                    <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
-                  </div>
-                </div>
-                <div className="row mb-4">
-                  <div className='col-4'>
-                    <label className="form-label" htmlFor="priority">Age:</label>
-                  </div>
-                  <div className='col-8'>
-                    <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
-                  </div>
-                </div>
-
-                <div className='row mb-4'>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="btn btn-success">Enter</button>
-                  </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="btn btn-danger">Simulate</button>
-                  </div>
-                  <div className='col-4 d-grid gap-2'>
-                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="btn btn-warning">Reset</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          }
-
-          {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
-          {(showMuLambda || showArrSerTime) &&
-            <>
-              <div className='col-8 pb-3 d-flex justify-content-center'>
-                {tableData.length > 0 &&
-                  <div className='row text-center'>
-
-                    <div className='col-6'>
-                      <div className='container my-4 justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <PieChart
-                              title='Server Utilization'
-                              labels={["Server 1", "Server 2"]}
-                              backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
-                              data={[server1Utilization, server2Utilization]}
-                            // hoverBackgroundColor=''
-                            // width={50}
-                            // height={50}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="mu">Mu (ST): </label>
                     </div>
-
-                    <div className='col-6'>
-                      <div className='container my-4 justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <PieChart
-                              title='Idle Time'
-                              labels={["Server 1", "Server 2"]}
-                              backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
-                              data={[server2Utilization, server1Utilization]}
-                            // hoverBackgroundColor=''
-                            // width={50}
-                            // height={50}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className='col-12'>
-                      <div className='container justify-content-center'>
-                        <div className="card">
-                          <div className="card-body">
-                            <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
-                            <p className='display-6' style={{ "fontSize": "50px" }}>Number of customers who wait</p>
-                          </div>
-                        </div>
-                      </div>
+                    <div className='col-8'>
+                      <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
                     </div>
                   </div>
-                }
+
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
+                    </div>
+                  </div>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="time">Time Of Simulation:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
+                    </div>
+                  </div>
+
+                  <div className='row mb-4 px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
+                    <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="col-3 col-md-3 btn btn-primary">Enter</button>
+                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="col-4 col-md-3  btn btn-success">Simulate</button>
+                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className=" col-3 col-md-3 btn btn-danger">Reset</button>
+
+                  </div>
+                </form>
               </div>
+            }
 
-              <hr />
-            </>
-          }
+            {/* Form for Arrival and Service Time */}
+            {showArrSerTime &&
+              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
+                <h1 className='display-6'>Customer Info</h1>
+                <hr />
+                <form>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
+                    </div>
+                  </div>
+
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="serviceTime">Service Time:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
+                    </div>
+                  </div>
+                  <div className="row mb-4">
+                    <div className='col-4'>
+                      <label className="form-label" htmlFor="priority">Age:</label>
+                    </div>
+                    <div className='col-8'>
+                      <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
+                    </div>
+                  </div>
+
+                  <div className='row px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
+                    <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="col-3 col-md-3 btn btn-primary">Enter</button>
+
+                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="col-4 col-md-3 btn btn-success">Simulate</button>
+
+                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className="col-3 col-md-3 btn btn-danger">Reset</button>
+
+                  </div>
+                </form>
+              </div>
+            }
+
+            {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
+            {(showMuLambda || showArrSerTime) &&
+              <>
+                <div className='col-md-12 p-md-2 p-3'>
+                  {tableData.length > 0 &&
+
+                    <div className='row text-center'>
+                      <div className='col-md-6 p-0 p-md-2'>
+                        <div className='mb-4 justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <PieChart
+                                title='Server Utilization'
+                                labels={["Server 1", "Server 2"]}
+                                backgroundColor={server1Utilization > server2Utilization ? ['#FF597B', '#82C3EC'] : ['#82C3EC', '#FF597B']}
+                                data={[server1Utilization, server2Utilization]}
+                              // hoverBackgroundColor=''
+                              // width={50}
+                              // height={50}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className='col-md-6 p-0 p-md-2'>
+                        <div className='mb-4 justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <PieChart
+                                title='Idle Time'
+                                labels={["Server 1", "Server 2"]}
+                                backgroundColor={server1Utilization > server2Utilization ? ['#227C70', '#FF6E31'] : ['#FF6E31', '#227C70']}
+                                data={[server2Utilization, server1Utilization]}
+                              // hoverBackgroundColor=''
+                              // width={50}
+                              // height={50}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className='col-12 p-0 p-md-2'>
+                        <div className='justify-content-center'>
+                          <div className="card">
+                            <div className="card-body">
+                              <h1 className='display-1' style={{ "fontSize": "100px" }}>{queueLength}</h1>
+                              <p className='display-6' style={{ "fontSize": "50px" }}>{queueLength > 1 ? "Customers" : "Customer"} who wait</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <hr />
+              </>
+            }
+          </div>
         </div>
 
         {/* Displaying the table */}
         {tableData.length > 0 &&
-          <div className='text-center'>
-            <table className="table table-bordered table-hover">
-              <thead className=''>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Arrival Time</th>
-                  <th scope="col">Service Time</th>
-                  <th scope="col">Age</th>
-                  <th scope="col">Start Time</th>
-                  <th scope="col">End Time</th>
-                  <th scope="col">Turn Around Time</th>
-                  <th scope="col">Waiting Time</th>
-                  <th scope="col">Response Time</th>
-                  <th scope="col">Server Name</th>
-                </tr>
-              </thead>
-              <tbody className='table-group-divider'>
-                {tableData?.map((item) => (
-                  <tr key={item.userId}>
-                    <th scope="row">{item.userId}</th>
-                    <td>{item.arrivalTime}</td>
-                    <td>{item.serviceTime}</td>
-                    <td>{item.priority}</td>
-                    <td>{item.startTime}</td>
-                    <td>{item.endTime}</td>
-                    <td>{item.turnAroundTime}</td>
-                    <td>{item.waitingTime}</td>
-                    <td>{item.responseTime}</td>
-                    <td>{item.nameOfServer}</td>
+          <div className=' row text-center justify-content-center'>
+            <div className={Style.overflowHidden}>
+              <table className="table table-bordered table-hover m-0">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Service Time</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Turn Around Time</th>
+                    <th scope="col">Waiting Time</th>
+                    <th scope="col">Response Time</th>
+                    <th scope="col">Server Name</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className='table-group-divider'>
+                  {tableData?.map((item) => (
+                    <tr key={item.userId}>
+                      <th scope="row">{item.userId}</th>
+                      <td>{item.arrivalTime}</td>
+                      <td>{item.serviceTime}</td>
+                      <td>{item.priority}</td>
+                      <td>{item.startTime}</td>
+                      <td>{item.endTime}</td>
+                      <td>{item.turnAroundTime}</td>
+                      <td>{item.waitingTime}</td>
+                      <td>{item.responseTime}</td>
+                      <td>{item.nameOfServer}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            <div className='row'>
-              <div className='col-6'>
+            <div className='row p-0'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Turn Around Time'
                   label='Turn Around Time'
@@ -880,28 +877,8 @@ const Home = () => {
                   height={100}
                 />
               </div>
-              <div className='col-6'>
-                <BarGraph
-                  title='Service Time'
-                  label='Service Time'
-                  labels={tableData?.map((item) => "User " + item.userId)}
-                  data={tableData?.map((item) => item.serviceTime)}
-                  backgroundColor='rgba(255, 159, 64, 0.2)'
-                  borderColor='rgba(255, 159, 64, 1)'
-                  borderWidth={1}
-                  width={400}
-                  height={100}
-                />
-              </div>
-            </div>
-          </div>
 
-        }
-        {queueLength > 0 &&
-          <div className='text-center'>
-
-            <div className='row'>
-              <div className='col-6'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Waiting Time'
                   label='Waiting Time'
@@ -914,8 +891,9 @@ const Home = () => {
                   height={100}
                 />
               </div>
-
-              <div className='col-6'>
+            </div>
+            <div className='row p-0'>
+              <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
                   title='Response Time'
                   label='Response Time'
@@ -929,10 +907,22 @@ const Home = () => {
                 />
               </div>
 
+              <div className='col-sm-6 p-0 px-md-3'>
+                <BarGraph
+                  title='Service Time'
+                  label='Service Time'
+                  labels={tableData?.map((item) => "User " + item.userId)}
+                  data={tableData?.map((item) => item.serviceTime)}
+                  backgroundColor='rgba(255, 159, 64, 0.2)'
+                  borderColor='rgba(255, 159, 64, 1)'
+                  borderWidth={1}
+                  width={400}
+                  height={100}
+                />
+              </div>
 
             </div>
           </div>
-
         }
 
       </main>
