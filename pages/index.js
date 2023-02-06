@@ -184,13 +184,13 @@ const Home = () => {
     }
     //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
     Customer.push({
-      
+
       ArrivalTimeofcustomer: arrivalTimevalue,
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-   
-   
+
+
     setArrivalTimevalue("");
     setServiceTimeValue("");
     setpriorityvalue("");
@@ -204,15 +204,15 @@ const Home = () => {
   };
 
 
-  function sortCustomers_on_unsorted_arrival(Customer){
-    
+  function sortCustomers_on_unsorted_arrival(Customer) {
+
 
     Customer.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
 
-   for(  let i=0;i<Customer.length;i++){
-      arrivalTime = [...arrivalTime,Customer[i].ArrivalTimeofcustomer] 
-      priority = [...priority,Customer[i].PriorityForCustomer]
-      serviceTime = [...serviceTime,    Customer[i].ServiceTimeofcustomer]
+    for (let i = 0; i < Customer.length; i++) {
+      arrivalTime = [...arrivalTime, Customer[i].ArrivalTimeofcustomer]
+      priority = [...priority, Customer[i].PriorityForCustomer]
+      serviceTime = [...serviceTime, Customer[i].ServiceTimeofcustomer]
     }
 
 
@@ -231,7 +231,7 @@ const Home = () => {
         PriorityForCustomer: priority[index],
         ServiceTimeofcustomer: serviceTime[index]
       });
-    })  
+    })
 
 
   }
@@ -437,8 +437,8 @@ const Home = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
     SetSimulateButton(true);
-    
-    if (Customer.length >0) {
+
+    if (Customer.length > 0) {
       sortCustomers_on_unsorted_arrival(Customer)
     }
 
@@ -449,8 +449,8 @@ const Home = () => {
       alert("Please enter some valid data");
       return;
     }
- 
-    
+
+
 
 
     // Making queues for each server
@@ -916,34 +916,7 @@ const Home = () => {
                 />
               </div>
 
-              <div className='col-sm-6 p-0 px-md-3'>
-                <BarGraph
-                  title='Waiting Time'
-                  label='Waiting Time'
-                  labels={tableData?.map((item) => "User " + item.userId)}
-                  data={tableData?.map((item) => item.waitingTime)}
-                  backgroundColor='rgba(255, 99, 132, 0.2)'
-                  borderColor='rgba(255, 99, 132, 1)'
-                  borderWidth={1}
-                  width={400}
-                  height={100}
-                />
-              </div>
-            </div>
-            <div className='row p-0'>
-              <div className='col-sm-6 p-0 px-md-3'>
-                <BarGraph
-                  title='Response Time'
-                  label='Response Time'
-                  labels={tableData?.map((item) => "User " + item.userId)}
-                  data={tableData?.map((item) => item.responseTime)}
-                  backgroundColor='rgba(153, 102, 255, 0.2)'
-                  borderColor='rgba(153, 102, 255, 1)'
-                  borderWidth={1}
-                  width={400}
-                  height={100}
-                />
-              </div>
+
 
               <div className='col-sm-6 p-0 px-md-3'>
                 <BarGraph
@@ -959,6 +932,44 @@ const Home = () => {
                 />
               </div>
 
+
+            </div>
+          </div>
+
+        }
+
+        {queueLength > 0 &&
+
+          <div className=' row text-center justify-content-center'>
+            <div className='row p-0'>
+              <div className='col-sm-6 p-0 px-md-3'>
+                <BarGraph
+                  title='Waiting Time'
+                  label='Waiting Time'
+                  labels={tableData?.map((item) => "User " + item.userId)}
+                  data={tableData?.map((item) => item.waitingTime)}
+                  backgroundColor='rgba(255, 99, 132, 0.2)'
+                  borderColor='rgba(255, 99, 132, 1)'
+                  borderWidth={1}
+                  width={400}
+                  height={100}
+                />
+              </div>
+
+
+              <div className='col-sm-6 p-0 px-md-3'>
+                <BarGraph
+                  title='Response Time'
+                  label='Response Time'
+                  labels={tableData?.map((item) => "User " + item.userId)}
+                  data={tableData?.map((item) => item.responseTime)}
+                  backgroundColor='rgba(153, 102, 255, 0.2)'
+                  borderColor='rgba(153, 102, 255, 1)'
+                  borderWidth={1}
+                  width={400}
+                  height={100}
+                />
+              </div>
             </div>
           </div>
         }
