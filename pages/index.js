@@ -22,6 +22,7 @@ let numbetweeninterval = []
 //Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
+let Customer = []
 
 //Servers to Populate
 
@@ -85,6 +86,7 @@ const Home = () => {
     data = [];
     CustomerInfo = [];
     CustomerInfodup = [];
+    Customer = []
 
     setTableData([]);
 
@@ -181,31 +183,58 @@ const Home = () => {
       return;
     }
     //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
-    CustomerInfo.push({
-      userId: ++id,
+    Customer.push({
+      
       ArrivalTimeofcustomer: arrivalTimevalue,
       PriorityForCustomer: priorityvalue,
       ServiceTimeofcustomer: serviceTimeValue
     });
-    //Duplicating CustomerInfo
-    CustomerInfodup.push({
-      userId: id,
-      ArrivalTimeofcustomer: arrivalTimevalue,
-      PriorityForCustomer: priorityvalue,
-      ServiceTimeofcustomer: serviceTimeValue
-    });
+   
+   
     setArrivalTimevalue("");
     setServiceTimeValue("");
     setpriorityvalue("");
 
     // Enable simulate button and reset button
-    if (CustomerInfo.length >= 3) {
+    if (Customer.length >= 3) {
       SetSimulateButton(false);
       SetResetButton(false);
     }
 
   };
 
+
+  function sortCustomers_on_unsorted_arrival(Customer){
+    
+
+    Customer.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
+
+   for(  let i=0;i<Customer.length;i++){
+      arrivalTime = [...arrivalTime,Customer[i].ArrivalTimeofcustomer] 
+      priority = [...priority,Customer[i].PriorityForCustomer]
+      serviceTime = [...serviceTime,    Customer[i].ServiceTimeofcustomer]
+    }
+
+
+    priority?.map((value, index) => {
+      CustomerInfo.push({
+        userId: ++id,
+        ArrivalTimeofcustomer: arrivalTime[index],
+        PriorityForCustomer: priority[index],
+        ServiceTimeofcustomer: serviceTime[index]
+      });
+
+      //This is a duplicate of CustomerInfo to Keep all data till end.
+      CustomerInfodup.push({
+        userId: id,
+        ArrivalTimeofcustomer: arrivalTime[index],
+        PriorityForCustomer: priority[index],
+        ServiceTimeofcustomer: serviceTime[index]
+      });
+    })  
+
+
+  }
   //Function For Random servicetime calculation by Mu
   function ServiceRandom(mu) {
 
@@ -408,12 +437,21 @@ const Home = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
     SetSimulateButton(true);
+    
+    if (Customer.length >0) {
+      sortCustomers_on_unsorted_arrival(Customer)
+    }
+
+
 
     // Validating data
     if (CustomerInfo.lenght == 0) {
       alert("Please enter some valid data");
       return;
     }
+ 
+    
+
 
     // Making queues for each server
     CustomerInfodup?.map((value, index) => {
