@@ -22,7 +22,7 @@ let numbetweeninterval = []
 //Later used For Populating Both Servers
 let CustomerInfo = []
 let CustomerInfodup = []
-
+let Customer = []
 
 //Servers to Populate
 
@@ -59,8 +59,7 @@ const Home = () => {
   // Hooks In Case of Manual Insertion of Arrival,ServiceTime and No of Customers
   const [arrivalTimevalue, setArrivalTimevalue] = useState("");
   const [serviceTimeValue, setServiceTimeValue] = useState("");
-  const [ServercountValue ,setServercountValue] = useState("")
-
+  const [priorityvalue, setpriorityvalue] = useState("");
 
   const [EnterButton, SetEnterButton] = useState(false);
   const [SimulateButton, SetSimulateButton] = useState(true);
@@ -171,66 +170,37 @@ const Home = () => {
   }
 
   const onEntervalue = () => {
-    if (arrivalTimevalue == "" || serviceTimeValue == "" ||ServercountValue==null) {
+    if (arrivalTimevalue == "" || serviceTimeValue == "" || priorityvalue == "") {
       alert("Values cannot be empty");
       return;
     }
-    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" ||ServercountValue=="-0") {
+    else if (arrivalTimevalue == "-0" || serviceTimeValue == "-0" || priorityvalue == "-0") {
       alert("Remove - sign from 0");
       return;
     }
-    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0||ServercountValue<0) {
+    else if (Number(arrivalTimevalue) < 0 || Number(serviceTimeValue) < 0 || Number(priorityvalue) < 0) {
       alert("Values cannot be negative");
       return;
     }
-    else{
+    //Populating CustomerInfo in case of Manual Insertions of Arrival,Priority and Service
+    Customer.push({
 
-       // Getting Random Arrival ,Service and priority
-    let result = Calculate_Initial_Columns(arrivalTimevalue,serviceTimeValue)
-    arrivalTime = result[0]
-    serviceTime = result[1]
-    priority = result[2]
+      ArrivalTimeofcustomer: arrivalTimevalue,
+      PriorityForCustomer: priorityvalue,
+      ServiceTimeofcustomer: serviceTimeValue
+    });
 
-    //Populating Dictionaries having all the that we'll insert in Both Servers
-    //By Using Customerinfo DIctionarty. we'll populate servers by passing customers one by one to servers on the basis of sorting.
-    //After each Insertion,we'll splice inserted customer from Customer Info
-    priority?.map((value, index) => {
-      CustomerInfo.push({
-        userId: ++id,
-        ArrivalTimeofcustomer: arrivalTime[index],
-        PriorityForCustomer: priority[index],
-        ServiceTimeofcustomer: serviceTime[index]
-      });
 
-      //This is a duplicate of CustomerInfo to Keep all data till end.
-      CustomerInfodup.push({
-        userId: id,
-        ArrivalTimeofcustomer: arrivalTime[index],
-        PriorityForCustomer: priority[index],
-        ServiceTimeofcustomer: serviceTime[index]
-      });
-    })
+    setArrivalTimevalue("");
+    setServiceTimeValue("");
+    setpriorityvalue("");
 
-    setMuValue("");
-    setLambdaValue("");
-    setSimulationTime("")
     // Enable simulate button and reset button
-    SetSimulateButton(false);
-    SetResetButton(false);
-       // Enable simulate button and reset button
-    if (Customer.length ==1) {
+    if (Customer.length >= 3) {
       SetSimulateButton(false);
       SetResetButton(false);
-    
     }
 
-    }
-
-
- 
-    
-
-   
   };
 
 
@@ -297,7 +267,7 @@ const Home = () => {
   }
 
   ////Function For Random ArrivalTime calculation by Mu
-  function ArrivalRandom(interarrivalArr, mu) {
+  function ArrivalRandom(interarrivalArr, x, mu) {
     let priority = []
     let resultforservice = []
     let arrivalArr = [0];
@@ -305,7 +275,7 @@ const Home = () => {
     for (let i = 0; i < interarrivalArr.length; i++) {
       if (i != 0) {
         let temp = arrivalArr[i - 1] + interarrivalArr[i]
-        // if (temp <= x) {
+        if (temp <= x) {
           arrivalArr.push(temp);
           //service time
           const sss = ServiceRandom(mu)
@@ -315,19 +285,10 @@ const Home = () => {
           priority[i] = PriorityRandom();
         }
         else {
-          let temp =  interarrivalArr[i]
-           // if (temp <= x) {
-            arrivalArr.push(temp);
-            //service time
-            const sss = ServiceRandom(mu)
-            resultforservice[i] = Math.round(sss)
-  
-            //calculating proirity
-            priority[i] = PriorityRandom();
-         
+          break
         }
       }
-    
+    }
     return [arrivalArr, resultforservice, priority];
   }
 
@@ -346,8 +307,8 @@ const Home = () => {
 
   //This Function is basically For Calculation OF Initial Columns in Randomness
   //e.g-cummulative probabability,loopup,number b'w arrivals ,classintervals
-  function Calculate_Initial_Columns( lambda, mu) {
-    
+  function Calculate_Initial_Columns(x, lambda, mu) {
+    const fact = factorial(x);
     let ita = 0;
     for (let i = 0; i > -1; i++) {
       const aaa = Math.exp(-lambda) * Math.pow(lambda, i)
@@ -411,7 +372,7 @@ const Home = () => {
     })
 
     //Calling ArrivalRandom, we'll return arrival,service and priority arrays
-    return ArrivalRandom(interarrival, mu)
+    return ArrivalRandom(interarrival, x, mu)
   }
 
   // This function is returning single customer every time on the basis of priority
@@ -472,287 +433,102 @@ const Home = () => {
 
   }
 
-//  function chitest(arrivalTime){
-//   debugger
-//   let obsf= arrivalTime.length
-//   let mle = 0
-  
-//   let shisq = 0
-//   let expectedfrequency = []
-//   arrivalTime.forEach(element => {
-//     mle+=element
-//   });
-  
-//   let lambdaaa= mle/obsf
-//   let prob = 0
-//   for (let i = 0;i>obsf;i++){
-//     let fx = (Math.pow( Math.E,-lambdaaa)*Math.pow(lambdaaa,i))/factorial(i)
-//     let expectedfreq = fx*obsf
-//     // expectedfrequency.push(expectedfreq)
-//     prob+=fx
-//     let she =Math.pow((1-expectedfreq),2)/expectedfreq
-//        shisq+=she
+  const simulate = () => {
+    // Disable enter button and simulator button
+    SetEnterButton(true);
+    SetSimulateButton(true);
 
-//   }
-//   const XLSX = require('xlsx');
-// const fs = require('fs');
-
-
-// // Convert array to worksheet
-// const worksheet = XLSX.utils.aoa_to_sheet([arrrivaltime]);
-
-// // Create workbook
-// const workbook = XLSX.utils.book_new();
-// XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-// // Write workbook to file
-// const filename = 'temp.xlsx';
-// XLSX.writeFile(workbook, filename);
-
-// // Open file
-// const filepath = __dirname + '/' + filename;
-// fs.readFile(filepath, (err, data) => {
-//   if (err) {
-//     console.error(err);
-//     return;
-//   }
-//   console.log(`File opened: ${filepath}`);
-// });
-       
-//  }
-  function Multi_server_queue()
-{
-  // Making queues for each server
-  CustomerInfodup?.map((value, index) => {
-    if (index == 0) {
-      const readyforserver = sorting(CustomerInfo)
-      Pushing(server1, readyforserver, "server 1")
+    if (Customer.length > 0) {
+      sortCustomers_on_unsorted_arrival(Customer)
     }
 
-    if (index == 1) {
-      const readyforserver = sorting(CustomerInfo)
-      if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
-        Pushing(server2, readyforserver, "server 2")
-      }
-      else {
+
+
+    // Validating data
+    if (CustomerInfo.lenght == 0) {
+      alert("Please enter some valid data");
+      return;
+    }
+
+
+
+
+    // Making queues for each server
+    CustomerInfodup?.map((value, index) => {
+      if (index == 0) {
+        const readyforserver = sorting(CustomerInfo)
         Pushing(server1, readyforserver, "server 1")
       }
-    }
-    if (index > 1) {
 
-      if (server2.length > 0 && (server1[server1.length - 1].endTime <= server2[server2.length - 1].endTime)) {
-        const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
-        if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-          Pushing(server1, readyforserver, "server 1")
+      if (index == 1) {
+        const readyforserver = sorting(CustomerInfo)
+        if (readyforserver.ArrivalTimeofcustomer < server1[server1.length - 1].endTime) {
+          Pushing(server2, readyforserver, "server 2")
         }
         else {
-          const temp = 0;
-          if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
-            Pushing(server1, readyforserver, "server 1")
-          }
-          else {
-            temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-            Pushing(server1, readyforserver, "server 1", temp)
-          }
+          Pushing(server1, readyforserver, "server 1")
         }
       }
-      else {
-        if (server2.length > 0 && (server1[server1.length - 1].endTime > CustomerInfo[0].ArrivalTimeofcustomer)) {
-          const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
-          if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
-            Pushing(server2, readyforserver, "server 2")
+      if (index > 1) {
+
+        if (server2.length > 0 && (server1[server1.length - 1].endTime <= server2[server2.length - 1].endTime)) {
+          const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
+          if (server1[server1.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
+            Pushing(server1, readyforserver, "server 1")
           }
           else {
             const temp = 0;
-            if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
-              temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-              Pushing(server2, readyforserver, "server 2", temp)
+            if (readyforserver.ArrivalTimeofcustomer > server1[server1.length - 1].endTime) {
+              Pushing(server1, readyforserver, "server 1")
             }
             else {
-              Pushing(server2, readyforserver, "server 2")
+              temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
+              Pushing(server1, readyforserver, "server 1", temp)
             }
           }
         }
         else {
-          const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
-          if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
-            Pushing(server2, readyforserver, "server 2")
-
+          if (server2.length > 0 && (server1[server1.length - 1].endTime > CustomerInfo[0].ArrivalTimeofcustomer)) {
+            const readyforserver = sorting(CustomerInfo, server2[server2.length - 1].endTime)
+            if (server2[server2.length - 1].endTime == readyforserver.ArrivalTimeofcustomer) {
+              Pushing(server2, readyforserver, "server 2")
+            }
+            else {
+              const temp = 0;
+              if (server2[server2.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
+                temp = Number(Number(server2[server2.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
+                Pushing(server2, readyforserver, "server 2", temp)
+              }
+              else {
+                Pushing(server2, readyforserver, "server 2")
+              }
+            }
           }
           else {
+            const readyforserver = sorting(CustomerInfo, server1[server1.length - 1].endTime)
+            if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
+              Pushing(server2, readyforserver, "server 2")
 
-            Pushing(server1, readyforserver, "server 1")
+            }
+            else {
+
+              Pushing(server1, readyforserver, "server 1")
+            }
+
           }
-
         }
       }
-    }
-  })
-   // Populating start and end time from each server
-   server1?.map((item, index) => {
-    startTime.push(
-      {
-        userId: item.userId,
-        startTime: item.startTime
-      }
-    );
+    })
 
-    endTime.push(
-      {
-        userId: item.userId,
-        endTime: item.endTime
-      }
-    );
-  })
-
-  server2.map((item, index) => {
-    startTime.push(
-      {
-        userId: item.userId,
-        startTime: item.startTime
-      }
-    );
-
-    endTime.push(
-      {
-        userId: item.userId,
-        endTime: item.endTime
-      }
-    );
-  })
-
-  //populating servername
-  server1?.map((item, index) => {
-    servername.push(
-      {
-        userId: item.userId,
-        servernamekey: item.server
-      }
-    );
-  })
-
-  server2.map((item, index) => {
-    servername.push(
-      {
-        userId: item.userId,
-        servernamekey: item.server
-      }
-    );
-  })
-
-  // Calculating turn around time
-  server1?.map((item, index) => {
-    turnAroundTime.push(
-      {
-        userId: item.userId,
-        turnAroundTime: Number(item.endTime) - Number(item.arrrivaltime)
-      }
-    );
-  })
-
-  server2.map((item, index) => {
-    turnAroundTime.push(
-      {
-        userId: item.userId,
-        turnAroundTime: Number(item.endTime) - Number(item.arrrivaltime)
-      }
-    )
-  })
-
-  // Calculating waiting time
-  server1?.map((item, index) => {
-    waitingTime.push(
-      {
-        userId: item.userId,
-        waitingTime: Number(item.startTime) - Number(item.arrrivaltime)
-      }
-    )
-  })
-
-  server2.map((item, index) => {
-    waitingTime.push(
-      {
-        userId: item.userId,
-        waitingTime: Number(item.startTime) - Number(item.arrrivaltime)
-      }
-    )
-  })
-
-  // Calculating response time
-  server1?.map((item, index) => {
-    responseTime.push(
-      {
-        userId: item.userId,
-        responseTime: Number(item.startTime) - Number(item.arrrivaltime)
-      }
-    );
-  })
-
-  server2.map((item, index) => {
-    responseTime.push(
-      {
-        userId: item.userId,
-        responseTime: Number(item.startTime) - Number(item.arrrivaltime)
-      }
-    )
-  })
-
-  // Calculating queue length
-  waitingTime.map((item, index) => {
-    if (item.waitingTime > 0) {
-      queueLength = queueLength + 1;
-    }
-  })
-
-  // Calculating server utilization
-  let totalServiceTime = 0;
-  CustomerInfodup.map((item, index) => {
-    totalServiceTime = totalServiceTime + Number(item.ServiceTimeofcustomer);
-  })
-
-  server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
-  server2Utilization = 100 - server1Utilization;
-
-
-
-}
-
-
-function Single_ServerQueue(){
-  CustomerInfodup?.map((value, index) => {
-   
-    if (index == 0) {
-      const readyforserver = sorting(CustomerInfo)
-      Pushing(server1, readyforserver, "server 1")
-    }
-    else{
-
-      const readyforserver = sorting(CustomerInfo,server1[server1.length - 1].endTime)
-      const temp = 0;
-      if (server1[server1.length - 1].endTime > readyforserver.ArrivalTimeofcustomer) {
-        temp = Number(Number(server1[server1.length - 1].endTime) - Number(readyforserver.ArrivalTimeofcustomer))
-        Pushing(server1, readyforserver, "server 1", temp)
-
-
-      }
-      else{
-
-      Pushing(server1, readyforserver, "server 1")
-      }
-
-    }
-     
-
-  })
-     // Populating start and end time from each server
-     server1?.map((item, index) => {
+    // Populating start and end time from each server
+    server1?.map((item, index) => {
       startTime.push(
         {
           userId: item.userId,
           startTime: item.startTime
         }
       );
-  
+
       endTime.push(
         {
           userId: item.userId,
@@ -760,9 +536,23 @@ function Single_ServerQueue(){
         }
       );
     })
-  
-   
-    
+
+    server2.map((item, index) => {
+      startTime.push(
+        {
+          userId: item.userId,
+          startTime: item.startTime
+        }
+      );
+
+      endTime.push(
+        {
+          userId: item.userId,
+          endTime: item.endTime
+        }
+      );
+    })
+
     //populating servername
     server1?.map((item, index) => {
       servername.push(
@@ -772,10 +562,16 @@ function Single_ServerQueue(){
         }
       );
     })
-  
-    
-    
-  
+
+    server2.map((item, index) => {
+      servername.push(
+        {
+          userId: item.userId,
+          servernamekey: item.server
+        }
+      );
+    })
+
     // Calculating turn around time
     server1?.map((item, index) => {
       turnAroundTime.push(
@@ -785,9 +581,16 @@ function Single_ServerQueue(){
         }
       );
     })
-  
-   
-  
+
+    server2.map((item, index) => {
+      turnAroundTime.push(
+        {
+          userId: item.userId,
+          turnAroundTime: Number(item.endTime) - Number(item.arrrivaltime)
+        }
+      )
+    })
+
     // Calculating waiting time
     server1?.map((item, index) => {
       waitingTime.push(
@@ -797,9 +600,16 @@ function Single_ServerQueue(){
         }
       )
     })
-  
-   
-  
+
+    server2.map((item, index) => {
+      waitingTime.push(
+        {
+          userId: item.userId,
+          waitingTime: Number(item.startTime) - Number(item.arrrivaltime)
+        }
+      )
+    })
+
     // Calculating response time
     server1?.map((item, index) => {
       responseTime.push(
@@ -809,59 +619,31 @@ function Single_ServerQueue(){
         }
       );
     })
-  
-   
-  
+
+    server2.map((item, index) => {
+      responseTime.push(
+        {
+          userId: item.userId,
+          responseTime: Number(item.startTime) - Number(item.arrrivaltime)
+        }
+      )
+    })
+
     // Calculating queue length
     waitingTime.map((item, index) => {
       if (item.waitingTime > 0) {
         queueLength = queueLength + 1;
       }
     })
-  
+
     // Calculating server utilization
     let totalServiceTime = 0;
     CustomerInfodup.map((item, index) => {
       totalServiceTime = totalServiceTime + Number(item.ServiceTimeofcustomer);
     })
+
     server1Utilization = Math.round((((Number(server1[server1.length - 1].endTime)) - Number((server1[0].startTime))) / totalServiceTime) * 100);
-
-}
-
-  const simulate = () => {
-    // Disable enter button and simulator button
-    SetEnterButton(true);
-    SetSimulateButton(true);
-
-  
-    debugger
-   CustomerInfo= CustomerInfo.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
-
-   CustomerInfodup= CustomerInfodup.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
-
-    // Validating data
-    if (CustomerInfo.lenght == 0) {
-      alert("Please enter some valid data");
-      return;
-    }
-
-
-     
-
-    // Making queues for each server
-    if(ServercountValue=="1"){
-      Single_ServerQueue()
-      // debugger
-      // chitest(arrivalTime)
-
-    }
-
-    else{
-      Multi_server_queue()
-    }
-    setArrivalTimevalue("");
-    setServiceTimeValue("");
-    setServercountValue("");
+    server2Utilization = 100 - server1Utilization;
     // Sorting data
     startTime.sort((a, b) => a.userId - b.userId);
     endTime.sort((a, b) => a.userId - b.userId);
@@ -999,13 +781,12 @@ function Single_ServerQueue(){
                   </div>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="Servercount">No of servers:</label>
+                      <label className="form-label" htmlFor="priority">Age:</label>
                     </div>
                     <div className='col-8'>
-                      <input type="number" id="Servercount" value={ServercountValue} className="form-control" onChange={(event) => { setServercountValue(event.target.value) }} />
+                      <input type="number" id="priortyid" value={priorityvalue} className="form-control" onChange={(event) => { setpriorityvalue(event.target.value) }} />
                     </div>
                   </div>
-
 
                   <div className='row px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
                     <button disabled={EnterButton} type="button" onClick={() => onEntervalue()} className="col-3 col-md-3 btn btn-primary">Enter</button>
@@ -1196,6 +977,6 @@ function Single_ServerQueue(){
       </main>
     </>
   )
-      }
+}
 
 export default Home;
