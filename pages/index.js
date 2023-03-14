@@ -51,7 +51,7 @@ let Lq = 0;
 let idle = 0;
 let WqGGC = 0;
 let LqGGC = 0;
-let distribution = ""
+let distribution =  ""
 //Table data
 let data = [];
 
