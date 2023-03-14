@@ -87,7 +87,7 @@ const Home = () => {
     data = [];
     CustomerInfo = [];
     CustomerInfodup = [];
-    Customer = []
+    
 
     setTableData([]);
 
@@ -183,6 +183,9 @@ const Home = () => {
       alert("Values cannot be negative");
       return;
     }
+    else if(ServercountValue>2){
+      alert("Sorry! server can't be more than 2")
+    }
     else{
 
        // Getting Random Arrival ,Service and priority
@@ -218,53 +221,17 @@ const Home = () => {
     SetSimulateButton(false);
     SetResetButton(false);
        // Enable simulate button and reset button
-    if (Customer.length ==1) {
+    if (CustomerInfo.length ==1) {
       SetSimulateButton(false);
       SetResetButton(false);
     
     }
 
     }
-
-
- 
-    
-
-   
   };
 
 
-  function sortCustomers_on_unsorted_arrival(Customer) {
 
-
-    Customer.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
-
-    for (let i = 0; i < Customer.length; i++) {
-      arrivalTime = [...arrivalTime, Customer[i].ArrivalTimeofcustomer]
-      priority = [...priority, Customer[i].PriorityForCustomer]
-      serviceTime = [...serviceTime, Customer[i].ServiceTimeofcustomer]
-    }
-
-
-    priority?.map((value, index) => {
-      CustomerInfo.push({
-        userId: ++id,
-        ArrivalTimeofcustomer: arrivalTime[index],
-        PriorityForCustomer: priority[index],
-        ServiceTimeofcustomer: serviceTime[index]
-      });
-
-      //This is a duplicate of CustomerInfo to Keep all data till end.
-      CustomerInfodup.push({
-        userId: id,
-        ArrivalTimeofcustomer: arrivalTime[index],
-        PriorityForCustomer: priority[index],
-        ServiceTimeofcustomer: serviceTime[index]
-      });
-    })
-
-
-  }
   //Function For Random servicetime calculation by Mu
   function ServiceRandom(mu) {
 
@@ -834,7 +801,7 @@ function Single_ServerQueue(){
     SetSimulateButton(true);
 
   
-    debugger
+  
    CustomerInfo= CustomerInfo.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
 
    CustomerInfodup= CustomerInfodup.sort((a, b) => a.ArrivalTimeofcustomer - b.ArrivalTimeofcustomer);
@@ -851,7 +818,7 @@ function Single_ServerQueue(){
     // Making queues for each server
     if(ServercountValue=="1"){
       Single_ServerQueue()
-      // debugger
+      
       // chitest(arrivalTime)
 
     }
@@ -931,48 +898,6 @@ function Single_ServerQueue(){
 
         <div className="m-md-4">
           <div className={`row justify-content-center ${Style.background}`} id='selected'>
-            {/* Form for Mu and Lambda */}
-            {showMuLambda &&
-              <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
-                <h1 className='display-6'>Mu and Lambda Value</h1>
-                <hr />
-                <form>
-
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="mu">Mu (ST): </label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="mu" value={muValue} required className="form-control" onChange={(event) => { setMuValue(event.target.value) }} />
-                    </div>
-                  </div>
-
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="lambda">Lambda (AT):</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="lambda" value={lambdaValue} className="form-control" onChange={(event) => { setLambdaValue(event.target.value) }} />
-                    </div>
-                  </div>
-                  <div className="row mb-4">
-                    <div className='col-4'>
-                      <label className="form-label" htmlFor="time">Time Of Simulation:</label>
-                    </div>
-                    <div className='col-8'>
-                      <input type="number" id="time" value={SimulationTime} className="form-control" onChange={(event) => { setSimulationTime(event.target.value) }} />
-                    </div>
-                  </div>
-
-                  <div className='row mb-4 px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
-                    <button disabled={EnterButton} type="button" onClick={() => onMuLambdaEnter()} className="col-3 col-md-3 btn btn-primary">Enter</button>
-                    <button disabled={SimulateButton} type="button" onClick={() => simulate()} className="col-4 col-md-3  btn btn-success">Simulate</button>
-                    <button disabled={ResetButton} type="button" onClick={() => resetData()} className=" col-3 col-md-3 btn btn-danger">Reset</button>
-
-                  </div>
-                </form>
-              </div>
-            }
 
             {/* Form for Arrival and Service Time */}
             {showArrSerTime &&
@@ -1020,12 +945,15 @@ function Single_ServerQueue(){
             }
 
             {/* Displaying Server Utilization, Idle Time and Number of Customers who wait */}
-            {(showMuLambda || showArrSerTime) &&
+            {( showArrSerTime ) &&
               <>
                 <div className='col-md-12 p-md-2 p-3'>
-                  {tableData.length > 0 &&
-
+                  {tableData.length > 0 && 
+                      
                     <div className='row text-center'>
+                     
+                     
+                      
                       <div className='col-md-6 p-0 p-md-2'>
                         <div className='mb-4 justify-content-center'>
                           <div className="card">
@@ -1061,7 +989,8 @@ function Single_ServerQueue(){
                           </div>
                         </div>
                       </div>
-
+                     
+                  
                       <div className='col-12 p-0 p-md-2'>
                         <div className='justify-content-center'>
                           <div className="card">
@@ -1079,6 +1008,8 @@ function Single_ServerQueue(){
                 <hr />
               </>
             }
+            
+
           </div>
         </div>
 
