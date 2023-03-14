@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 import Style from '../styles/responsive.module.css';
+import readXlsxFile from 'read-excel-file'
 
 // Declaring Variables , Arrays 
 //Lambda
@@ -50,6 +51,7 @@ let Lq = 0;
 let idle = 0;
 let WqGGC = 0;
 let LqGGC = 0;
+let distribution = ""
 //Table data
 let data = [];
 
@@ -57,6 +59,7 @@ const Home = () => {
   //To show either Mu and Lambda or Arrival time and service time
   const [showArrSerTime, setShowArrSerTime] = useState(false);
   const [showMuLambda, setShowMuLambda] = useState(false);
+  const [showchisquare,setshowchisquare] =useState(false);
   const [showMM1, setShowMM1] = useState(false);
   const [showMG1, setShowMG1] = useState(false);
   const [showGG1, setShowGG1] = useState(false);
@@ -132,6 +135,8 @@ const Home = () => {
     Lq = 0;
     LqGGC = 0;
     idle = 0;
+    distribution = ""
+
     setShowMeasures(false);
     setShowGGCMeasures(false);
 
@@ -168,16 +173,30 @@ const Home = () => {
     if (parameter == "MuLambda") {
       setShowArrSerTime(false);
       setShowMuLambda(true);
+      setshowchisquare(false)
     }
     else if (parameter == "ArrSerTime") {
       setShowArrSerTime(true);
       setShowMuLambda(false);
+      setshowchisquare(false)
+    }
+    else if(parameter=="chisquaretest"){
+
+      setShowArrSerTime(false);
+      setShowMuLambda(false);
+      setshowchisquare(true)
     }
   }
 
   const onNext = () => {
+     debugger
+    if((distributionForLambda== "gamma-distribution" ||  distributionForLambda== "normal-distribution" ) &&    (distributionForMu == "poisson-distribution" ||distributionForMu ==  "exponential-distribution") ){
+
+
+      alert("select proper distribution")
+    }
     // Select Any Poisson Exponential Distribution for Mu and Lambda
-    if (distributionForLambda == "poisson-distribution" && distributionForMu == "poisson-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "poisson-distribution" && distributionForMu == "exponential-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "exponential-distribution" && distributionForMu == "poisson-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "exponential-distribution" && distributionForMu == "exponential-distribution" && numberofServerForMuLambda == "1") {
+  else if (distributionForLambda == "poisson-distribution" && distributionForMu == "poisson-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "poisson-distribution" && distributionForMu == "exponential-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "exponential-distribution" && distributionForMu == "poisson-distribution" && numberofServerForMuLambda == "1" || distributionForLambda == "exponential-distribution" && distributionForMu == "exponential-distribution" && numberofServerForMuLambda == "1") {
       setShowMM1(true);
       setShowBtn(true);
       setShowNextBtn(false);
@@ -594,7 +613,35 @@ const Home = () => {
 
   }
 
-  //  function chitest(arrivalTime){
+   function chitest(){
+
+
+
+
+// File.
+const input = document.getElementById('input')
+
+input.addEventListener('change', () => {
+  readXlsxFile(input.files[0], { sheet: 1, columnToKey: { A: 'name', B: 'email', C: 'phone' } }).then(({ rows, errors }) => {
+    // if (errors.length > 0) {
+    //   console.error(errors)
+    //   return
+    
+
+    // `rows` is an array of rows, where each row is an object with keys as per the columnToKey mapping.
+    console.log(rows)
+
+    // Alternatively, you can access specific columns using Array.map or Array.reduce:
+  const results = rows.map(row => {
+      const sum = row.A + row.B // Example calculation: sum of columns A and B.
+      return { ...row, sum }
+    })
+
+    // Log the results.
+    console.log(results)
+
+  })
+})
   //   debugger
   //   let obsf= arrivalTime.length
   //   let mle = 0
@@ -641,7 +688,7 @@ const Home = () => {
   //   console.log(`File opened: ${filepath}`);
   // });
 
-  //  }
+    }
   function Multi_server_queue() {
     // Making queues for each server
     CustomerInfodup?.map((value, index) => {
@@ -973,7 +1020,8 @@ const Home = () => {
       if (ServercountValue == "1") {
         Single_ServerQueue()
 
-        // chitest(arrivalTime)
+
+     
 
       }
 
@@ -1016,26 +1064,36 @@ const Home = () => {
       }
 
     }
+    else if (showchisquare){
+      debugger
+      chitest()
+    }
     else if (showMuLambda) {
       if (showMM1 == true) {
+        distribution = "M/M/1 Model"
         setShowMeasures(true);
         calculateMM1ForMuLambda()
       } else if (showMG1 == true) {
+        distribution = "M/G/1 Model"
         setShowMeasures(true);
         calculateMG1ForMuLambda()
       } else if (showGG1 == true) {
+        distribution = "G/G/1 Model"
         setShowMeasures(true);
         calculateGG1ForMuLambda()
       }
       else if (showMM2 == true) {
+        distribution = "M/M/2 Model"
         setShowMeasures(true);
         calculateMM2ForMuLambda()
       }
       else if (showMG2 == true) {
+        distribution = "M/G/2 Model"
         setShowMeasures(true);
         calculateMG2ForMuLambda()
       }
       else if (showGG2 == true) {
+        distribution = "G/G/2 Model"
         setShowGGCMeasures(true);
         calculateGG2ForMuLambda()
       }
@@ -1071,6 +1129,10 @@ const Home = () => {
               <input onClick={() => toggleParameter("ArrSerTime")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
               <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
             </div>
+            <div className="form-check form-check-inline">
+              <input onClick={() => toggleParameter("chisquaretest")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
+              <label className="form-check-label" htmlFor="inlineRadio2">chi square</label>
+            </div>
           </div>
         </div>
 
@@ -1078,6 +1140,15 @@ const Home = () => {
 
         <div className="m-md-4">
           <div className={`row justify-content-center ${Style.background}`} id='selected'>
+          
+          {showchisquare &&
+          <>
+          <input type="file" id="input" />
+          
+          </>
+          
+          
+          }
             {/* Form for Mu and Lambda */}
             {showMuLambda &&
               <div className='col-md-9 bg-light p-md-5 p-3 rounded-5'>
@@ -1157,6 +1228,13 @@ const Home = () => {
                   {showMM1 &&
                     <div>
                       <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
+
+                      <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
                         </div>
@@ -1179,6 +1257,12 @@ const Home = () => {
                   {/* GG1 */}
                   {showGG1 &&
                     <div>
+                      <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
                       <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
@@ -1235,6 +1319,12 @@ const Home = () => {
                   {showMG1 &&
                     <div>
                       <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
+                      <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
                         </div>
@@ -1273,6 +1363,12 @@ const Home = () => {
                   {/* MG2 */}
                   {showMG2 &&
                     <div>
+                      <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
                       <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
@@ -1313,6 +1409,12 @@ const Home = () => {
                   {showMM2 &&
                     <div>
                       <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
+                      <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
                         </div>
@@ -1335,6 +1437,12 @@ const Home = () => {
                   {/* GG2 */}
                   {showGG2 &&
                     <div>
+                      <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
                       <div className="row mb-4">
                         <div className='col-3'>
                           <label className="form-label" htmlFor="mu">Mu (ST): </label>
@@ -1410,6 +1518,12 @@ const Home = () => {
                 <hr className='mt-4' />
                 {showMeasures == true &&
                   <div className="row justify-content-between align-items-center">
+                    <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
                     <div className='col-4 px-2 mt-3'>
                       <div className="py-5 border rounded text-center" style={{ background: "rgba(54, 162, 235, 0.2)" }}>
                         <p className='fs-4 m-0'>Utilization of System:<br /> {P.toFixed(2)} Minutes</p>
@@ -1444,6 +1558,12 @@ const Home = () => {
                 }
                 {showGGCMeasures == true &&
                   <div className="row justify-content-between align-items-center">
+                    <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1>{distribution}</h1>
+                        </div>
+                        </div>
                     <div className='col-4 px-2 mt-3'>
                       <div className='py-5 border rounded text-center' style={{ background: "rgba(54, 162, 235, 0.2)" }}>
                         <p className='fs-4 m-0'>Utilization of System:<br /> {P.toFixed(2)} Minutes</p>
