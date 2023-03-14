@@ -57,6 +57,7 @@ let WqGGC = 0;
 let LqGGC = 0;
 //Table data
 let data = [];
+let distribution =  ""
 
 const Home = () => {
   //To show either Mu and Lambda or Arrival time and service time
@@ -130,6 +131,8 @@ const Home = () => {
     setmaxValueForGG1Arr("");
     setmaxValueForGG1Ser("");
     setmaxValueForMG1("");
+    
+    distribution = ""
     L = 0;
     P = 0;
     W = 0;
@@ -607,54 +610,7 @@ const Home = () => {
 
   }
 
-  //  function chitest(arrivalTime){
-  //   debugger
-  //   let obsf= arrivalTime.length
-  //   let mle = 0
-
-  //   let shisq = 0
-  //   let expectedfrequency = []
-  //   arrivalTime.forEach(element => {
-  //     mle+=element
-  //   });
-
-  //   let lambdaaa= mle/obsf
-  //   let prob = 0
-  //   for (let i = 0;i>obsf;i++){
-  //     let fx = (Math.pow( Math.E,-lambdaaa)*Math.pow(lambdaaa,i))/factorial(i)
-  //     let expectedfreq = fx*obsf
-  //     // expectedfrequency.push(expectedfreq)
-  //     prob+=fx
-  //     let she =Math.pow((1-expectedfreq),2)/expectedfreq
-  //        shisq+=she
-
-  //   }
-  //   const XLSX = require('xlsx');
-  // const fs = require('fs');
-
-
-  // // Convert array to worksheet
-  // const worksheet = XLSX.utils.aoa_to_sheet([arrrivaltime]);
-
-  // // Create workbook
-  // const workbook = XLSX.utils.book_new();
-  // XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-  // // Write workbook to file
-  // const filename = 'temp.xlsx';
-  // XLSX.writeFile(workbook, filename);
-
-  // // Open file
-  // const filepath = __dirname + '/' + filename;
-  // fs.readFile(filepath, (err, data) => {
-  //   if (err) {
-  //     console.error(err);
-  //     return;
-  //   }
-  //   console.log(`File opened: ${filepath}`);
-  // });
-
-  //  }
+ 
   function Multi_server_queue() {
     // Making queues for each server
     CustomerInfodup?.map((value, index) => {
@@ -1031,24 +987,30 @@ const Home = () => {
     }
     else if (showMuLambda) {
       if (showMM1 == true) {
+         distribution = "M/M/1 Model"
         setShowMeasures(true);
         calculateMM1ForMuLambda()
       } else if (showMG1 == true) {
+         distribution = "M/G/1 Model"
         setShowMeasures(true);
         calculateMG1ForMuLambda()
       } else if (showGG1 == true) {
+         distribution = "G/G/1 Model"
         setShowMeasures(true);
         calculateGG1ForMuLambda()
       }
       else if (showMM2 == true) {
+         distribution = "M/M/2 Model"
         setShowMeasures(true);
         calculateMM2ForMuLambda()
       }
       else if (showMG2 == true) {
+         distribution = "M/G/2 Model"
         setShowMeasures(true);
         calculateMG2ForMuLambda()
       }
       else if (showGG2 == true) {
+         distribution = "G/G/2 Model"
         setShowGGCMeasures(true);
         calculateGG2ForMuLambda()
       }
@@ -1057,8 +1019,7 @@ const Home = () => {
 
   function readExcelSheet(e) {
 
-    // empty ExcelData
-    ExcelData = [];
+ 
 
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -1084,15 +1045,54 @@ const Home = () => {
         // Saving data to ExcelData Array
         ExcelData.push({
           ArrivalTimeExc: row[0],
-          ServiceTimeExc: row[1],
+          observedfre: row[1],
           AgeExc: row[2],
         })
 
       }
-      console.log(ExcelData);
+    
+
+         
+    let sum_df= 0
+    let mle = []
+    let sum_mle = 0
+
+    let shisq = 0
+    
+    ExcelData.forEach(element => {
+      sum_df+=element.observedfre
+      mle.push(element.ArrivalTimeExc*element.observedfre)
+      sum_mle+=(element.ArrivalTimeExc*element.observedfre)
+    });
+
+    let lambdaaa= sum_mle/sum_df
+    let prob = 0
+    debugger
+    for (let i = 0;i<ExcelData.length;i++){
+      
+      let p = (Math.pow( Math.E,-lambdaaa)*Math.pow(lambdaaa,i))/factorial(i)
+      let expectedfreq = p*sum_df
+      // expectedfrequency.push(expectedfreq
+      let sq = (ExcelData[i].observedfre-expectedfreq).toFixed(1)
+      let she =Math.pow(sq,2)
+      let sh111 = she/expectedfreq
+         shisq+=sh111
+    }
+    console.log(shisq)
+    let ftable_criticalvalue  = 18.307
+    if(shisq<ftable_criticalvalue){
+      alert("your dataset is accepting null hypothesis, so we can say thats the dataset is following poisson distribution")
+    }
+    else{
+        alert("your dataset is not accepting null hypothesis, so we can say thats the dataset is following some other distribution")
+    }
 
     };
     reader.readAsBinaryString(file);
+
+   
+
+
   }
 
 
@@ -1119,16 +1119,16 @@ const Home = () => {
           <div className='col-12 text-center'>
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("MuLambda")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" />
-              <label className="form-check-label" htmlFor="inlineRadio1">Mu and Lambda</label>
+              <label className="form-check-label" htmlFor="inlineRadio1">Queueing Model</label>
             </div>
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("ArrSerTime")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
-              <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
+              <label className="form-check-label" htmlFor="inlineRadio2">Random Simulation</label>
             </div>
 
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("ChiSquare")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" />
-              <label className="form-check-label" htmlFor="inlineRadio3">Chi Square</label>
+              <label className="form-check-label" htmlFor="inlineRadio3">Chi Square Test</label>
             </div>
           </div>
         </div>
@@ -1140,7 +1140,7 @@ const Home = () => {
             {/* Form for Mu and Lambda */}
             {showMuLambda &&
               <div className='col-md-9 bg-light p-md-5 p-3 rounded-5'>
-                <h1 className='display-6'>Mu and Lambda Value</h1>
+                <h1 className='display-6'>Make Your Model By Selecting proper distributions</h1>
                 <hr />
                 <form>
 
@@ -1469,6 +1469,12 @@ const Home = () => {
                 <hr className='mt-4' />
                 {showMeasures == true &&
                   <div className="row justify-content-between align-items-center">
+                     <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1 className='text-center'>{distribution}</h1>
+                        </div>
+                        </div>
                     <div className='col-4 px-2 mt-3'>
                       <div className="py-5 border rounded text-center" style={{ background: "rgba(54, 162, 235, 0.2)" }}>
                         <p className='fs-4 m-0'>Utilization of System:<br /> {P.toFixed(2)} Minutes</p>
@@ -1503,6 +1509,12 @@ const Home = () => {
                 }
                 {showGGCMeasures == true &&
                   <div className="row justify-content-between align-items-center">
+                     <div className="row mb-4">
+                        <div className='col-12'>
+
+                          <h1 className='text-center' >{distribution}</h1>
+                        </div>
+                        </div>
                     <div className='col-4 px-2 mt-3'>
                       <div className='py-5 border rounded text-center' style={{ background: "rgba(54, 162, 235, 0.2)" }}>
                         <p className='fs-4 m-0'>Utilization of System:<br /> {P.toFixed(2)} Minutes</p>
@@ -1541,12 +1553,12 @@ const Home = () => {
             {/* Form for Arrival and Service Time */}
             {showArrSerTime &&
               <div className='col-md-8 bg-light p-md-5 p-3 rounded-5'>
-                <h1 className='display-6'>Customer Info</h1>
+                <h1 className='display-6'>Perform Simulation with Random Numbers</h1>
                 <hr />
                 <form>
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="arrivalTime">Arrival Time: </label>
+                      <label className="form-label" htmlFor="arrivalTime">Avg Arrival Time: </label>
                     </div>
                     <div className='col-8'>
                       <input type="number" id="arrivalTime" value={arrivalTimevalue} required className="form-control" onChange={(event) => { setArrivalTimevalue(event.target.value) }} />
@@ -1555,7 +1567,7 @@ const Home = () => {
 
                   <div className="row mb-4">
                     <div className='col-4'>
-                      <label className="form-label" htmlFor="serviceTime">Service Time:</label>
+                      <label className="form-label" htmlFor="serviceTime">Avg Service Time:</label>
                     </div>
                     <div className='col-8'>
                       <input type="number" id="serviceTime" value={serviceTimeValue} className="form-control" onChange={(event) => { setServiceTimeValue(event.target.value) }} />
