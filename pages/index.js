@@ -3,8 +3,13 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 import Style from '../styles/responsive.module.css';
+import * as XLSX from 'xlsx';
 
 // Declaring Variables , Arrays 
+
+// Excel Data
+let ExcelData = []
+
 //Lambda
 let arrivalTime = [];
 //Mu
@@ -57,6 +62,7 @@ const Home = () => {
   //To show either Mu and Lambda or Arrival time and service time
   const [showArrSerTime, setShowArrSerTime] = useState(false);
   const [showMuLambda, setShowMuLambda] = useState(false);
+  const [showChiSquare, setShowChiSquare] = useState(false);
   const [showMM1, setShowMM1] = useState(false);
   const [showMG1, setShowMG1] = useState(false);
   const [showGG1, setShowGG1] = useState(false);
@@ -167,11 +173,18 @@ const Home = () => {
 
     if (parameter == "MuLambda") {
       setShowArrSerTime(false);
+      setShowChiSquare(false);
       setShowMuLambda(true);
     }
     else if (parameter == "ArrSerTime") {
-      setShowArrSerTime(true);
       setShowMuLambda(false);
+      setShowChiSquare(false);
+      setShowArrSerTime(true);
+    }
+    else if (parameter == "ChiSquare") {
+      setShowArrSerTime(false);
+      setShowMuLambda(false);
+      setShowChiSquare(true);
     }
   }
 
@@ -950,7 +963,7 @@ const Home = () => {
   }
 
 
-  
+
   const simulate = () => {
     // Disable enter button and simulator button
     SetEnterButton(true);
@@ -1042,6 +1055,47 @@ const Home = () => {
     }
   }
 
+  function readExcelSheet(e) {
+
+    // empty ExcelData
+    ExcelData = [];
+
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = event.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      const rows = [];
+      for (let rowNum = range.s.r + 2; rowNum <= range.e.r; rowNum++) {
+        const row = [];
+        for (let colNum = range.s.c; colNum <= range.e.c; colNum++) {
+          const cell = sheet[XLSX.utils.encode_cell({ r: rowNum, c: colNum })];
+          if (cell !== undefined && cell.v !== undefined) {
+            row.push(cell.v);
+          } else {
+            row.push('');
+          }
+        }
+        rows.push(row);
+
+        // Saving data to ExcelData Array
+        ExcelData.push({
+          ArrivalTimeExc: row[0],
+          ServiceTimeExc: row[1],
+          AgeExc: row[2],
+        })
+
+      }
+      console.log(ExcelData);
+
+    };
+    reader.readAsBinaryString(file);
+  }
+
+
   return (
     <>
       <Head>
@@ -1052,7 +1106,7 @@ const Home = () => {
         {/* <link rel="stylesheet" href="../styles/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" crossOrigin="anonymous" /> */}
         <link rel="icon" href="/favicon.ico" />
 
-        
+
       </Head>
 
       <main className="m-4">
@@ -1071,6 +1125,11 @@ const Home = () => {
               <input onClick={() => toggleParameter("ArrSerTime")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
               <label className="form-check-label" htmlFor="inlineRadio2">Arrival and Service Time</label>
             </div>
+
+            <div className="form-check form-check-inline">
+              <input onClick={() => toggleParameter("ChiSquare")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" />
+              <label className="form-check-label" htmlFor="inlineRadio3">Chi Square</label>
+            </div>
           </div>
         </div>
 
@@ -1088,19 +1147,19 @@ const Home = () => {
                   <div className="row mb-4">
                     <div className="col-md-4">
                       <div className="d-flex justify-content-end ps-0">
-                        
-                        <select onChange={(event) => { setDistributionForLambda(event.target.value) }} value={distributionForLambda} className={`col-12 ${Style.dropdown}`} disabled={dropDown}style={{
- backgroundColor: "#f2f2f2",
- border: "1px solid #ccc",
- borderRadius: "5px",
- color: "#333",
- padding: "12px 24px",
 
- fontSize: "13px",
- fontWeight: "bold",
- cursor: "pointer",
- height:"45px"
-  }}>
+                        <select onChange={(event) => { setDistributionForLambda(event.target.value) }} value={distributionForLambda} className={`col-12 ${Style.dropdown}`} disabled={dropDown} style={{
+                          backgroundColor: "#f2f2f2",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          color: "#333",
+                          padding: "12px 24px",
+
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          height: "45px"
+                        }}>
                           <option value="">Select Arrival Time Distribution</option>
                           <option value="poisson-distribution">Poisson Distribution</option>
                           <option value="exponential-distribution">Exponential Distribution</option>
@@ -1112,17 +1171,17 @@ const Home = () => {
                     <div className="col-md-4">
                       <div className="d-flex justify-content-end ps-0">
                         <select onChange={(event) => { setDistributionForMu(event.target.value) }} value={distributionForMu} className={`col-9 col-md-12 ${Style.dropdown}`} disabled={dropDown} style={{
-     backgroundColor: "#f2f2f2",
-     border: "1px solid #ccc",
-     borderRadius: "5px",
-     color: "#333",
-     padding: "12px 24px",
-    
-     fontSize: "13px",
-     fontWeight: "bold",
-     cursor: "pointer",
-     height:"45px"
-  }}>
+                          backgroundColor: "#f2f2f2",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          color: "#333",
+                          padding: "12px 24px",
+
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          height: "45px"
+                        }}>
                           <option value="">Select Service Time Distribution</option>
                           <option value="poisson-distribution">Poisson Distribution</option>
                           <option value="exponential-distribution">Exponential Distribution</option>
@@ -1134,17 +1193,17 @@ const Home = () => {
                     <div className="col-md-4">
                       <div className="ps-0">
                         <select onChange={(event) => { setNumberofServerForMuLambda(event.target.value) }} value={numberofServerForMuLambda} className={`col-12 ${Style.dropdown}`} disabled={dropDown} style={{
-    backgroundColor: "#f2f2f2",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-    color: "#333",
-    padding: "12px 24px",
-   
-    fontSize: "13px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    height:"45px"
-  }}>
+                          backgroundColor: "#f2f2f2",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          color: "#333",
+                          padding: "12px 24px",
+
+                          fontSize: "13px",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          height: "45px"
+                        }}>
                           <option value="">Select No. of Server</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -1503,31 +1562,31 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="row mb-4">
-                  <div className='col-4'>
+                    <div className='col-4'>
                       <label className="form-label" htmlFor="serviceTime">No of Servers:</label>
                     </div>
 
-                  <div className='col-8'>
-                        <select onChange={(event) => { setServercountValue(event.target.value) }} value={ServercountValue} className={`col-12 ${Style.dropdown}`} disabled={dropDown} style={{
-    backgroundColor: "#f2f2f2",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-    color: "#333",
-    padding: "12px 24px",
-   
-    fontSize: "13px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    height:"45px"
-  }}>
-                          <option value="">Select value</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                        </select>
-                     </div>
+                    <div className='col-8'>
+                      <select onChange={(event) => { setServercountValue(event.target.value) }} value={ServercountValue} className={`col-12 ${Style.dropdown}`} disabled={dropDown} style={{
+                        backgroundColor: "#f2f2f2",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px",
+                        color: "#333",
+                        padding: "12px 24px",
+
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        height: "45px"
+                      }}>
+                        <option value="">Select value</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                      </select>
                     </div>
-                 
-               
+                  </div>
+
+
 
 
                   <div className='row px-lg-5 mb-4 p-md-3 p-2 justify-content-between'>
@@ -1605,6 +1664,14 @@ const Home = () => {
 
                 <hr />
               </>
+            }
+
+            {/* Reading Excel File */}
+            {(showChiSquare) &&
+              <>
+                <input type="file" id="file-input" onChange={readExcelSheet} />
+              </>
+
             }
 
 
