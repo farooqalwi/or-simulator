@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 import Style from '../styles/responsive.module.css';
-import * as XLSX from 'xlsx';
+
 
 // Declaring Variables , Arrays 
 
