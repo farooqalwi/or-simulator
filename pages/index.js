@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BarGraph from './bar';
 import PieChart from './pie';
 import Style from '../styles/responsive.module.css';
-import * as XLSX from 'xlsx';
+
 
 // Declaring Variables , Arrays 
 
@@ -1124,11 +1124,6 @@ const Home = () => {
             <div className="form-check form-check-inline">
               <input onClick={() => toggleParameter("ArrSerTime")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
               <label className="form-check-label" htmlFor="inlineRadio2">Random Simulation</label>
-            </div>
-
-            <div className="form-check form-check-inline">
-              <input onClick={() => toggleParameter("ChiSquare")} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" />
-              <label className="form-check-label" htmlFor="inlineRadio3">Chi Square Test</label>
             </div>
           </div>
         </div>
